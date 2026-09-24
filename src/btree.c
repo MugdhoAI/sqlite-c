@@ -447,22 +447,32 @@ static BTreeResult split_leaf(BTree *tree, uint32_t leaf_page,
 
     uint32_t parent = node_parent(old_page);
     uint32_t next = leaf_next(old_page);
+    uint32_t left_count = LEAF_SPLIT_LEFT;
+    uint32_t right_count = LEAF_SPLIT_RIGHT;
+
+    if (insert_at == old_count) {
+        left_count = LEAF_MAX_CELLS;
+        right_count = 1U;
+    } else if (insert_at == 0) {
+        left_count = 1U;
+        right_count = LEAF_MAX_CELLS;
+    }
 
     initialize_leaf(old_page, parent);
     initialize_leaf(new_page, parent);
 
-    for (uint32_t i = 0; i < LEAF_SPLIT_LEFT; ++i) {
+    for (uint32_t i = 0; i < left_count; ++i) {
         unsigned char *cell = leaf_cell(old_page, i);
         serialize_row(cell, &combined[i]);
     }
-    set_node_count(old_page, LEAF_SPLIT_LEFT);
+    set_node_count(old_page, left_count);
     set_leaf_next(old_page, new_page_number);
 
-    for (uint32_t i = 0; i < LEAF_SPLIT_RIGHT; ++i) {
+    for (uint32_t i = 0; i < right_count; ++i) {
         unsigned char *cell = leaf_cell(new_page, i);
-        serialize_row(cell, &combined[LEAF_SPLIT_LEFT + i]);
+        serialize_row(cell, &combined[left_count + i]);
     }
-    set_node_count(new_page, LEAF_SPLIT_RIGHT);
+    set_node_count(new_page, right_count);
     set_leaf_next(new_page, next);
 
     if (parent == 0) {
