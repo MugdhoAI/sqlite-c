@@ -240,7 +240,7 @@ static uint32_t internal_child_index(const unsigned char *page, int id)
     uint32_t count = node_count(page);
 
     for (uint32_t i = 0; i < count; ++i) {
-        if ((uint32_t)id < internal_key(page, i)) {
+        if ((uint32_t)id <= internal_key(page, i)) {
             return i;
         }
     }
