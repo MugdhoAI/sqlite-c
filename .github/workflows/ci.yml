@@ -18,6 +18,9 @@ jobs:
       - name: Build with strict warnings
         run: make clean && make
 
+      - name: Run benchmark smoke test
+        run: make benchmark
+
   sanitizers:
     runs-on: ubuntu-latest
 
