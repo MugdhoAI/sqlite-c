@@ -103,6 +103,13 @@ SqliteResult table_flush(Table *table)
     return btree_flush(table->tree) == BTREE_OK ? SQLITE_OK : SQLITE_IO_ERROR;
 }
 
+void table_print_tree(const Table *table)
+{
+    if (table != NULL) {
+        btree_print(table->tree);
+    }
+}
+
 void table_destroy(Table *table)
 {
     if (table == NULL) {
