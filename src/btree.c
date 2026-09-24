@@ -517,13 +517,31 @@ BTree *btree_open(Pager *pager, BTreeResult *result)
     return tree;
 }
 
+BTreeResult btree_flush(BTree *tree)
+{
+    if (tree == NULL) {
+        return BTREE_INVALID_ARGUMENT;
+    }
+
+    write_metadata(tree);
+
+    for (size_t page_number = 0; page_number < tree->pager->num_pages; ++page_number) {
+        if (tree->pager->pages[page_number] != NULL &&
+            pager_flush(tree->pager, page_number) != PAGER_OK) {
+            return BTREE_IO_ERROR;
+        }
+    }
+
+    return BTREE_OK;
+}
+
 void btree_close(BTree *tree)
 {
     if (tree == NULL) {
         return;
     }
 
-    write_metadata(tree);
+    (void)btree_flush(tree);
     free(tree);
 }
 
