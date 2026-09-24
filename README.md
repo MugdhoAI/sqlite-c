@@ -40,6 +40,7 @@ The current shell supports:
     .btree
     INSERT INTO users VALUES (id, 'username', 'email');
     SELECT * FROM users;
+    SELECT * FROM users WHERE id = 1;
 
 The original short insert form is still accepted for quick experiments.
 
