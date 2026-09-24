@@ -6,7 +6,7 @@ BUILD_DIR := build
 SRC_DIR := src
 TEST_DIR := tests
 
-SOURCES := $(SRC_DIR)/main.c $(SRC_DIR)/database.c $(SRC_DIR)/btree.c $(SRC_DIR)/pager.c
+SOURCES := $(SRC_DIR)/main.c $(SRC_DIR)/database.c $(SRC_DIR)/btree.c $(SRC_DIR)/pager.c $(SRC_DIR)/parser.c
 OBJECTS := $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 TARGET := $(BUILD_DIR)/sqlite-c
 TEST_TARGET := $(BUILD_DIR)/test_database
