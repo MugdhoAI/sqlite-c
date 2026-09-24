@@ -53,6 +53,35 @@ static void test_validation(void)
     table_destroy(table);
 }
 
+static void test_persistence(void)
+{
+    const char *filename = "build/test_database.db";
+    remove(filename);
+
+    SqliteResult result;
+    Table *table = table_open(filename, &result);
+    assert(table != NULL);
+    assert(result == SQLITE_OK);
+
+    Row row = make_row(7, "carol", "carol@example.com");
+    assert(table_insert(table, &row) == SQLITE_OK);
+    assert(table_flush(table) == SQLITE_OK);
+    table_destroy(table);
+
+    table = table_open(filename, &result);
+    assert(table != NULL);
+    assert(table_size(table) == 1);
+
+    const Row *stored = table_row_at(table, 0);
+    assert(stored != NULL);
+    assert(stored->id == 7);
+    assert(strcmp(stored->username, "carol") == 0);
+    assert(strcmp(stored->email, "carol@example.com") == 0);
+
+    table_destroy(table);
+    remove(filename);
+}
+
 static void test_capacity(void)
 {
     Table *table = table_create(1);
@@ -72,5 +101,6 @@ int main(void)
     test_insert_and_read();
     test_validation();
     test_capacity();
+    test_persistence();
     return 0;
 }
