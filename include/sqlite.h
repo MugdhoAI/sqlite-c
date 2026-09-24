@@ -32,6 +32,7 @@ Table *table_create(size_t capacity);
 Table *table_open(const char *filename, SqliteResult *result);
 void table_destroy(Table *table);
 SqliteResult table_flush(Table *table);
+void table_print_tree(const Table *table);
 
 SqliteResult table_insert(Table *table, const Row *row);
 size_t table_size(const Table *table);
