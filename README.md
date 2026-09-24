@@ -37,6 +37,7 @@ The current shell supports:
 
     .help
     .exit
+    .btree
     INSERT INTO users VALUES (id, 'username', 'email');
     SELECT * FROM users;
 
@@ -49,6 +50,10 @@ Example:
     db > SELECT * FROM users;
     1 | alice | alice@example.com
     2 | bob | bob@example.com
+
+## Development
+
+The test suite covers persistence, B tree leaf splitting, ordering, validation, and SQL parsing. CI builds with strict compiler warnings and runs the test suite under AddressSanitizer and UndefinedBehaviorSanitizer.
 
 ## Architecture
 
