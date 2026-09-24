@@ -1,6 +1,7 @@
 #include "btree.h"
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -705,6 +706,51 @@ BTreeResult btree_read_all(const BTree *tree, Row *rows, size_t capacity, size_t
 size_t btree_size(const BTree *tree)
 {
     return tree == NULL ? 0U : tree->row_count;
+}
+
+static void print_indent(unsigned int depth)
+{
+    for (unsigned int i = 0; i < depth; ++i) {
+        fputs("  ", stdout);
+    }
+}
+
+static void print_node(const BTree *tree, uint32_t page_number, unsigned int depth)
+{
+    BTreeResult result;
+    const unsigned char *page = const_page_for(tree, page_number, &result);
+    if (page == NULL || result != BTREE_OK) {
+        return;
+    }
+
+    print_indent(depth);
+
+    if (node_type(page) == NODE_LEAF) {
+        printf("leaf (rows %u)\\n", node_count(page));
+        for (uint32_t i = 0; i < node_count(page); ++i) {
+            print_indent(depth + 1U);
+            printf("%u\\n", leaf_key(page, i));
+        }
+        return;
+    }
+
+    printf("internal (keys %u)\\n", node_count(page));
+    for (uint32_t i = 0; i < node_count(page); ++i) {
+        print_node(tree, internal_child(page, i), depth + 1U);
+        print_indent(depth + 1U);
+        printf("separator %u\\n", internal_key(page, i));
+    }
+    print_node(tree, internal_right_child(page), depth + 1U);
+}
+
+void btree_print(const BTree *tree)
+{
+    if (tree == NULL) {
+        return;
+    }
+
+    puts("B tree:");
+    print_node(tree, tree->root_page, 0);
 }
 
 const char *btree_result_string(BTreeResult result)
