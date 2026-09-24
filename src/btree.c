@@ -750,6 +750,7 @@ void btree_print(const BTree *tree)
 
     puts("B tree:");
     print_node(tree, tree->root_page, 0);
+    fflush(stdout);
 }
 
 const char *btree_result_string(BTreeResult result)
