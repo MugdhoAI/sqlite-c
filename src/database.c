@@ -193,6 +193,24 @@ const Row *table_row_at(const Table *table, size_t index)
     return &table->rows[index];
 }
 
+SqliteResult table_find(const Table *table, int id, Row *row)
+{
+    if (table == NULL || table->tree == NULL || row == NULL || id <= 0) {
+        return SQLITE_INVALID_ID;
+    }
+
+    BTreeResult result = btree_find(table->tree, id, row);
+    if (result == BTREE_OK) {
+        return SQLITE_OK;
+    }
+
+    if (result == BTREE_INVALID_ARGUMENT) {
+        return SQLITE_ROW_NOT_FOUND;
+    }
+
+    return SQLITE_IO_ERROR;
+}
+
 const char *sqlite_result_string(SqliteResult result)
 {
     switch (result) {
@@ -208,6 +226,8 @@ const char *sqlite_result_string(SqliteResult result)
         return "email must be non empty and at most 255 characters";
     case SQLITE_DUPLICATE_ID:
         return "id already exists";
+    case SQLITE_ROW_NOT_FOUND:
+        return "row not found";
     case SQLITE_IO_ERROR:
         return "database I/O error";
     default:
