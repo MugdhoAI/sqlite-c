@@ -339,24 +339,13 @@ static BTreeResult internal_insert(BTree *tree, uint32_t parent_page,
         write_u32(cell, left_child);
         write_u32(cell + 4U, separator);
     } else {
-        uint32_t old_right = internal_child(parent, insert_at);
         for (uint32_t i = count; i > insert_at; --i) {
             memcpy(internal_cell(parent, i), internal_cell(parent, i - 1U),
                    INTERNAL_CELL_SIZE);
         }
+
         write_u32(internal_cell(parent, insert_at), left_child);
         write_u32(internal_cell(parent, insert_at) + 4U, separator);
-        set_internal_right_child(parent, old_right);
-        for (uint32_t i = insert_at + 1U; i < count + 1U; ++i) {
-            if (i < count) {
-                uint32_t child = internal_child(parent, i);
-                unsigned char *child_page_data = page_for(tree, child, &result);
-                if (child_page_data == NULL) {
-                    return result;
-                }
-                set_node_parent(child_page_data, parent_page);
-            }
-        }
     }
 
     set_node_count(parent, count + 1U);
