@@ -1,3 +1,4 @@
+#include "parser.h"
 #include "sqlite.h"
 
 #include <stdio.h>
@@ -15,30 +16,27 @@ static void print_help(void)
 {
     puts(".help");
     puts(".exit");
-    puts("insert <id> <username> <email>");
-    puts("select");
+    puts("INSERT INTO users VALUES (id, 'username', 'email');");
+    puts("SELECT * FROM users;");
 }
 
-static int parse_insert(const char *input, Row *row)
+static void print_rows(const Table *table)
 {
-    char username[SQLITE_USERNAME_MAX + 1];
-    char email[SQLITE_EMAIL_MAX + 1];
-
-    if (sscanf(input, "insert %d %32s %255s", &row->id, username, email) != 3) {
-        return 0;
+    for (size_t i = 0; i < table_size(table); ++i) {
+        const Row *row = table_row_at(table, i);
+        if (row != NULL) {
+            printf("%d | %s | %s\n", row->id, row->username, row->email);
+        }
     }
-
-    strcpy(row->username, username);
-    strcpy(row->email, email);
-
-    return 1;
 }
 
 int main(void)
 {
-    Table *table = table_create(TABLE_CAPACITY);
+    SqliteResult open_result;
+    Table *table = table_open(DATABASE_FILE, &open_result);
     if (table == NULL) {
-        fputs("failed to create table\n", stderr);
+        fprintf(stderr, "failed to open database: %s\n",
+                sqlite_result_string(open_result));
         return 1;
     }
 
@@ -54,42 +52,36 @@ int main(void)
 
         input[strcspn(input, "\n")] = '\0';
 
-        if (strcmp(input, ".exit") == 0) {
-            break;
+        Statement statement;
+        ParserResult parse_result = parse_statement(input, &statement);
+
+        if (parse_result != PARSER_OK) {
+            puts(parser_result_string(parse_result));
+            continue;
         }
 
-        if (strcmp(input, ".help") == 0) {
+        switch (statement.type) {
+        case META_EXIT:
+            goto done;
+        case META_HELP:
             print_help();
-            continue;
-        }
-
-        if (strcmp(input, "select") == 0) {
-            for (size_t i = 0; i < table_size(table); ++i) {
-                const Row *row = table_row_at(table, i);
-                printf("%d | %s | %s\n", row->id, row->username, row->email);
-            }
-            continue;
-        }
-
-        if (strncmp(input, "insert ", 7) == 0) {
-            Row row;
-            if (!parse_insert(input, &row)) {
-                puts("syntax error");
-                continue;
-            }
-
-            SqliteResult result = table_insert(table, &row);
+            break;
+        case STATEMENT_SELECT:
+            print_rows(table);
+            break;
+        case STATEMENT_INSERT: {
+            SqliteResult result = table_insert(table, &statement.row);
             if (result != SQLITE_OK) {
                 printf("error: %s\n", sqlite_result_string(result));
             }
-            continue;
+            break;
         }
-
-        puts("unrecognized command");
+        }
     }
 
+done:
     if (table_flush(table) != SQLITE_OK) {
-        fputs("failed to flush database\\n", stderr);
+        fputs("failed to flush database\n", stderr);
         table_destroy(table);
         return 1;
     }
