@@ -24,6 +24,7 @@ BTreeResult btree_flush(BTree *tree);
 BTreeResult btree_insert(BTree *tree, const Row *row);
 BTreeResult btree_find(const BTree *tree, int id, Row *row);
 BTreeResult btree_read_all(const BTree *tree, Row *rows, size_t capacity, size_t *count);
+void btree_print(const BTree *tree);
 size_t btree_size(const BTree *tree);
 
 const char *btree_result_string(BTreeResult result);
