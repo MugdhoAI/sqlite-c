@@ -49,6 +49,28 @@ static int parse_legacy_insert(const char *input, Statement *statement)
     return 0;
 }
 
+static int parse_select(const char *input, Statement *statement)
+{
+    if (strcmp(input, "SELECT * FROM users;") == 0 ||
+        strcmp(input, "SELECT * FROM users") == 0 ||
+        strcmp(input, "select * from users;") == 0 ||
+        strcmp(input, "select * from users") == 0) {
+        statement->type = STATEMENT_SELECT;
+        statement->where_id = 0;
+        return 1;
+    }
+
+    if (sscanf(input, "SELECT * FROM users WHERE id = %d", &statement->where_id) == 1 ||
+        sscanf(input, "select * from users where id = %d", &statement->where_id) == 1) {
+        if (statement->where_id > 0) {
+            statement->type = STATEMENT_SELECT;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 ParserResult parse_statement(const char *input, Statement *statement)
 {
     if (input == NULL || statement == NULL) {
@@ -76,11 +98,7 @@ ParserResult parse_statement(const char *input, Statement *statement)
         return PARSER_OK;
     }
 
-    if (strcmp(input, "SELECT * FROM users;") == 0 ||
-        strcmp(input, "SELECT * FROM users") == 0 ||
-        strcmp(input, "select * from users;") == 0 ||
-        strcmp(input, "select * from users") == 0) {
-        statement->type = STATEMENT_SELECT;
+    if (parse_select(input, statement)) {
         return PARSER_OK;
     }
 
