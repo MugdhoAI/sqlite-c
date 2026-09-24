@@ -61,6 +61,11 @@ static void test_btree_split_and_order(void)
     }
 
     assert(table_size(table) == 40);
+
+    Row duplicate = make_row(13);
+    assert(table_insert(table, &duplicate) == SQLITE_DUPLICATE_ID);
+    assert(table_size(table) == 40);
+
     table_destroy(table);
 
     table = table_open(filename, &result);
