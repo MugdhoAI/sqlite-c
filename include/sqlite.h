@@ -3,8 +3,11 @@
 
 #include <stddef.h>
 
+#include "pager.h"
+
 #define SQLITE_USERNAME_MAX 32
 #define SQLITE_EMAIL_MAX 255
+#define SQLITE_ROW_SIZE (sizeof(int) + (SQLITE_USERNAME_MAX + 1U) + (SQLITE_EMAIL_MAX + 1U))
 
 typedef enum {
     SQLITE_OK = 0,
@@ -12,7 +15,8 @@ typedef enum {
     SQLITE_INVALID_ID,
     SQLITE_INVALID_USERNAME,
     SQLITE_INVALID_EMAIL,
-    SQLITE_DUPLICATE_ID
+    SQLITE_DUPLICATE_ID,
+    SQLITE_IO_ERROR
 } SqliteResult;
 
 typedef struct {
@@ -24,7 +28,9 @@ typedef struct {
 typedef struct Table Table;
 
 Table *table_create(size_t capacity);
+Table *table_open(const char *filename, SqliteResult *result);
 void table_destroy(Table *table);
+SqliteResult table_flush(Table *table);
 
 SqliteResult table_insert(Table *table, const Row *row);
 size_t table_size(const Table *table);
