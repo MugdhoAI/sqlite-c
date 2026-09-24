@@ -10,7 +10,7 @@ The goal is not to reproduce the full SQLite feature set. The goal is to underst
 
 Phase 1 and the first storage milestone are complete. The repository has a portable C build, a small database API, an interactive shell, automated tests, and a page based persistence layer.
 
-The current engine stores a fixed number of rows in a database file through a 4096 byte page. The next storage milestone is the B tree layer, which will remove the current single page limitation.
+The current engine stores rows in a persistent page based B tree. The shell accepts a small SQL subset and scans the linked leaf pages in key order. The implementation deliberately keeps the supported SQL surface small so the storage engine remains the focus.
 
 ## Build
 
@@ -37,14 +37,16 @@ The current shell supports:
 
     .help
     .exit
-    insert <id> <username> <email>
-    select
+    INSERT INTO users VALUES (id, 'username', 'email');
+    SELECT * FROM users;
+
+The original short insert form is still accepted for quick experiments.
 
 Example:
 
-    db > insert 1 alice alice@example.com
-    db > insert 2 bob bob@example.com
-    db > select
+    db > INSERT INTO users VALUES (1, 'alice', 'alice@example.com');
+    db > INSERT INTO users VALUES (2, 'bob', 'bob@example.com');
+    db > SELECT * FROM users;
     1 | alice | alice@example.com
     2 | bob | bob@example.com
 
@@ -76,9 +78,9 @@ The architecture will evolve as each storage layer is implemented.
 - [x] Basic tests
 - [x] Page based storage
 - [x] Persistent database files
-- [ ] B tree table storage
-- [ ] SQL tokenizer and parser
-- [ ] Query execution
+- [x] B tree table storage
+- [x] SQL statement parser
+- [x] Query execution
 - [ ] Stronger error handling
 - [ ] Integration tests
 - [ ] Benchmarks and profiling
