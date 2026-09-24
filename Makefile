@@ -27,9 +27,13 @@ $(TEST_TARGET): $(TEST_DIR)/test_database.c $(SRC_DIR)/database.c $(SRC_DIR)/btr
 $(BUILD_DIR)/test_pager: $(TEST_DIR)/test_pager.c $(SRC_DIR)/pager.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
-test: $(TEST_TARGET) $(BUILD_DIR)/test_pager
+$(BUILD_DIR)/test_parser: $(TEST_DIR)/test_parser.c $(SRC_DIR)/parser.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
+
+test: $(TEST_TARGET) $(BUILD_DIR)/test_pager $(BUILD_DIR)/test_parser
 	./$(TEST_TARGET)
 	./$(BUILD_DIR)/test_pager
+	./$(BUILD_DIR)/test_parser
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
