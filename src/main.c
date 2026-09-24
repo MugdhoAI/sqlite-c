@@ -16,6 +16,7 @@ static void print_help(void)
 {
     puts(".help");
     puts(".exit");
+    puts(".btree");
     puts("INSERT INTO users VALUES (id, 'username', 'email');");
     puts("SELECT * FROM users;");
 }
@@ -65,6 +66,9 @@ int main(void)
             goto done;
         case META_HELP:
             print_help();
+            break;
+        case META_BTREE:
+            table_print_tree(table);
             break;
         case STATEMENT_SELECT:
             print_rows(table);
