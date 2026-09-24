@@ -11,7 +11,7 @@ OBJECTS := $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 TARGET := $(BUILD_DIR)/sqlite-c
 TEST_TARGET := $(BUILD_DIR)/test_database
 
-.PHONY: all clean test
+.PHONY: all clean test benchmark
 
 all: $(TARGET)
 
@@ -34,6 +34,12 @@ test: $(TEST_TARGET) $(BUILD_DIR)/test_pager $(BUILD_DIR)/test_parser
 	./$(TEST_TARGET)
 	./$(BUILD_DIR)/test_pager
 	./$(BUILD_DIR)/test_parser
+
+$(BUILD_DIR)/benchmark: bench/benchmark.c $(SRC_DIR)/database.c $(SRC_DIR)/btree.c $(SRC_DIR)/pager.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
+
+benchmark: $(BUILD_DIR)/benchmark
+	./$(BUILD_DIR)/benchmark
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
