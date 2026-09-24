@@ -2,12 +2,13 @@
 #define SQLITE_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "pager.h"
 
 #define SQLITE_USERNAME_MAX 32
 #define SQLITE_EMAIL_MAX 255
-#define SQLITE_ROW_SIZE (sizeof(int) + (SQLITE_USERNAME_MAX + 1U) + (SQLITE_EMAIL_MAX + 1U))
+#define SQLITE_ROW_SIZE (sizeof(uint32_t) + (SQLITE_USERNAME_MAX + 1U) + (SQLITE_EMAIL_MAX + 1U))
 
 typedef enum {
     SQLITE_OK = 0,
