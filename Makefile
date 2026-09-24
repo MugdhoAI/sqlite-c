@@ -21,7 +21,7 @@ $(TARGET): $(OBJECTS) | $(BUILD_DIR)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(TEST_TARGET): $(TEST_DIR)/test_database.c $(SRC_DIR)/database.c | $(BUILD_DIR)
+$(TEST_TARGET): $(TEST_DIR)/test_database.c $(SRC_DIR)/database.c $(SRC_DIR)/btree.c $(SRC_DIR)/pager.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
 $(BUILD_DIR)/test_pager: $(TEST_DIR)/test_pager.c $(SRC_DIR)/pager.c | $(BUILD_DIR)
