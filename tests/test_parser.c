@@ -22,6 +22,14 @@ static void test_select(void)
     assert(statement.type == STATEMENT_SELECT);
 }
 
+static void test_select_by_id(void)
+{
+    Statement statement;
+    assert(parse_statement("SELECT * FROM users WHERE id = 42;", &statement) == PARSER_OK);
+    assert(statement.type == STATEMENT_SELECT);
+    assert(statement.where_id == 42);
+}
+
 static void test_meta_command(void)
 {
     Statement statement;
@@ -40,6 +48,7 @@ int main(void)
 {
     test_insert();
     test_select();
+    test_select_by_id();
     test_meta_command();
     test_invalid_input();
     return 0;
