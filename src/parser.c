@@ -67,6 +67,11 @@ ParserResult parse_statement(const char *input, Statement *statement)
         return PARSER_OK;
     }
 
+    if (strcmp(input, ".btree") == 0) {
+        statement->type = META_BTREE;
+        return PARSER_OK;
+    }
+
     if (parse_insert(input, statement) || parse_legacy_insert(input, statement)) {
         return PARSER_OK;
     }
