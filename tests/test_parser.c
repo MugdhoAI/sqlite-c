@@ -22,6 +22,13 @@ static void test_select(void)
     assert(statement.type == STATEMENT_SELECT);
 }
 
+static void test_meta_command(void)
+{
+    Statement statement;
+    assert(parse_statement(".btree", &statement) == PARSER_OK);
+    assert(statement.type == META_BTREE);
+}
+
 static void test_invalid_input(void)
 {
     Statement statement;
@@ -33,6 +40,7 @@ int main(void)
 {
     test_insert();
     test_select();
+    test_meta_command();
     test_invalid_input();
     return 0;
 }
