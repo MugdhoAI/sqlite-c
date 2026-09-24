@@ -7,7 +7,8 @@ typedef enum {
     STATEMENT_INSERT,
     STATEMENT_SELECT,
     META_EXIT,
-    META_HELP
+    META_HELP,
+    META_BTREE
 } StatementType;
 
 typedef enum {
