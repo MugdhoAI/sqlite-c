@@ -20,6 +20,7 @@ typedef enum {
 typedef struct {
     StatementType type;
     Row row;
+    int where_id;
 } Statement;
 
 ParserResult parse_statement(const char *input, Statement *statement);
