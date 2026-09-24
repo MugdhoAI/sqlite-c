@@ -77,6 +77,29 @@ static void test_btree_split_and_order(void)
     remove(filename);
 }
 
+static void test_lookup(void)
+{
+    const char *filename = "build/test_lookup.db";
+    remove(filename);
+
+    SqliteResult result;
+    Table *table = table_open(filename, &result);
+    assert(table != NULL);
+
+    Row row = make_row(23);
+    assert(table_insert(table, &row) == SQLITE_OK);
+
+    Row found = {0};
+    assert(table_find(table, 23, &found) == SQLITE_OK);
+    assert(found.id == 23);
+    assert(strcmp(found.username, "user23") == 0);
+
+    assert(table_find(table, 99, &found) != SQLITE_OK);
+
+    table_destroy(table);
+    remove(filename);
+}
+
 static void test_validation(void)
 {
     const char *filename = "build/test_validation.db";
@@ -105,6 +128,7 @@ int main(void)
 {
     test_insert_and_read();
     test_btree_split_and_order();
+    test_lookup();
     test_validation();
     return 0;
 }
