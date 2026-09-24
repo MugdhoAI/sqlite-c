@@ -26,8 +26,10 @@ int main(void)
         snprintf(row.username, sizeof(row.username), "user%d", id);
         snprintf(row.email, sizeof(row.email), "user%d@example.com", id);
 
-        if (table_insert(table, &row) != SQLITE_OK) {
-            fputs("benchmark insert failed\n", stderr);
+        SqliteResult insert_result = table_insert(table, &row);
+        if (insert_result != SQLITE_OK) {
+            fprintf(stderr, "benchmark insert failed at row %d: %s\n",
+                    id, sqlite_result_string(insert_result));
             table_destroy(table);
             remove(filename);
             return 1;
