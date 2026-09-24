@@ -17,3 +17,12 @@ jobs:
 
       - name: Build with strict warnings
         run: make clean && make
+
+  sanitizers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests with AddressSanitizer and UBSan
+        run: make clean && make test CFLAGS="-std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer"
