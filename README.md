@@ -8,9 +8,9 @@ The goal is not to reproduce the full SQLite feature set. The goal is to underst
 
 ## Current status
 
-Phase 1 is complete: the repository has a portable C build, a small database API, an interactive shell, and automated tests.
+Phase 1 and the first storage milestone are complete. The repository has a portable C build, a small database API, an interactive shell, automated tests, and a page based persistence layer.
 
-The first working version stores rows in memory. Persistent pages and the B tree storage layer will be introduced in the next phase.
+The current engine stores a fixed number of rows in a database file through a 4096 byte page. The next storage milestone is the B tree layer, which will remove the current single page limitation.
 
 ## Build
 
@@ -74,8 +74,8 @@ The architecture will evolve as each storage layer is implemented.
 - [x] Interactive shell
 - [x] In memory rows and table
 - [x] Basic tests
-- [ ] Page based storage
-- [ ] Persistent database files
+- [x] Page based storage
+- [x] Persistent database files
 - [ ] B tree table storage
 - [ ] SQL tokenizer and parser
 - [ ] Query execution
