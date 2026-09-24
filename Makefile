@@ -6,7 +6,7 @@ BUILD_DIR := build
 SRC_DIR := src
 TEST_DIR := tests
 
-SOURCES := $(SRC_DIR)/main.c $(SRC_DIR)/database.c
+SOURCES := $(SRC_DIR)/main.c $(SRC_DIR)/database.c $(SRC_DIR)/pager.c
 OBJECTS := $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 TARGET := $(BUILD_DIR)/sqlite-c
 TEST_TARGET := $(BUILD_DIR)/test_database
@@ -24,8 +24,12 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 $(TEST_TARGET): $(TEST_DIR)/test_database.c $(SRC_DIR)/database.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
-test: $(TEST_TARGET)
+$(BUILD_DIR)/test_pager: $(TEST_DIR)/test_pager.c $(SRC_DIR)/pager.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
+
+test: $(TEST_TARGET) $(BUILD_DIR)/test_pager
 	./$(TEST_TARGET)
+	./$(BUILD_DIR)/test_pager
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
