@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TABLE_CAPACITY 1024
+#define DATABASE_FILE "build/sqlite.db"
 
 static void print_prompt(void)
 {
@@ -86,6 +86,12 @@ int main(void)
         }
 
         puts("unrecognized command");
+    }
+
+    if (table_flush(table) != SQLITE_OK) {
+        fputs("failed to flush database\\n", stderr);
+        table_destroy(table);
+        return 1;
     }
 
     table_destroy(table);
