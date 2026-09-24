@@ -158,7 +158,16 @@ SqliteResult table_insert(Table *table, const Row *row)
         }
     }
 
-    table->rows[table->size] = *row;
+    size_t insert_at = 0;
+    while (insert_at < table->size && table->rows[insert_at].id < row->id) {
+        ++insert_at;
+    }
+
+    for (size_t i = table->size; i > insert_at; --i) {
+        table->rows[i] = table->rows[i - 1U];
+    }
+
+    table->rows[insert_at] = *row;
     ++table->size;
     return SQLITE_OK;
 }
