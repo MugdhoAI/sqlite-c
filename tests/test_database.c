@@ -62,6 +62,8 @@ static void test_btree_split_and_order(void)
 
     assert(table_size(table) == 40);
 
+    table_print_tree(table);
+
     for (int id = 1; id <= 40; ++id) {
         Row duplicate = make_row(id);
         SqliteResult duplicate_result = table_insert(table, &duplicate);
