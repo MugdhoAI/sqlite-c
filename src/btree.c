@@ -281,6 +281,38 @@ static BTreeResult flush_page(BTree *tree, uint32_t page_number)
     return pager_flush(tree->pager, page_number) == PAGER_OK ? BTREE_OK : BTREE_IO_ERROR;
 }
 
+static BTreeResult update_parent_separator(BTree *tree, uint32_t leaf_page)
+{
+    BTreeResult result;
+    unsigned char *leaf = page_for(tree, leaf_page, &result);
+    if (leaf == NULL) {
+        return result;
+    }
+
+    uint32_t parent_page = node_parent(leaf);
+    if (parent_page == 0) {
+        return BTREE_OK;
+    }
+
+    unsigned char *parent = page_for(tree, parent_page, &result);
+    if (parent == NULL) {
+        return result;
+    }
+
+    uint32_t count = node_count(parent);
+    for (uint32_t i = 0; i < count; ++i) {
+        if (internal_child(parent, i) == leaf_page) {
+            write_u32(internal_cell(parent, i) + 4U, max_key(tree, leaf_page, &result));
+            if (result != BTREE_OK) {
+                return result;
+            }
+            return flush_page(tree, parent_page);
+        }
+    }
+
+    return BTREE_OK;
+}
+
 static BTreeResult internal_insert(BTree *tree, uint32_t parent_page,
                                    uint32_t left_child, uint32_t right_child)
 {
@@ -584,6 +616,11 @@ BTreeResult btree_insert(BTree *tree, const Row *row)
             serialize_row(leaf_cell(page, index), row);
             set_node_count(page, count + 1U);
             result = flush_page(tree, page_number);
+            if (result != BTREE_OK) {
+                return result;
+            }
+
+            result = update_parent_separator(tree, page_number);
             if (result != BTREE_OK) {
                 return result;
             }
