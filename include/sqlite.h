@@ -37,6 +37,7 @@ void table_print_tree(const Table *table);
 SqliteResult table_insert(Table *table, const Row *row);
 size_t table_size(const Table *table);
 const Row *table_row_at(const Table *table, size_t index);
+SqliteResult table_find(const Table *table, int id, Row *row);
 
 const char *sqlite_result_string(SqliteResult result);
 
