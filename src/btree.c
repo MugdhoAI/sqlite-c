@@ -183,15 +183,6 @@ static void initialize_leaf(unsigned char *page, uint32_t parent)
     set_leaf_next(page, 0);
 }
 
-static void initialize_internal(unsigned char *page, uint32_t parent)
-{
-    memset(page, 0, PAGE_SIZE);
-    set_node_type(page, NODE_INTERNAL);
-    set_node_parent(page, parent);
-    set_node_count(page, 0);
-    set_internal_right_child(page, 0);
-}
-
 static uint32_t allocate_page(BTree *tree, BTreeResult *result)
 {
     uint32_t page_number = (uint32_t)tree->pager->num_pages;
