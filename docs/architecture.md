@@ -34,7 +34,7 @@ Supported SQL currently includes:
 ```sql
 INSERT INTO users VALUES (id, 'username', 'email');
 SELECT * FROM users;
-SELECT * FROM users WHERE id = id;
+SELECT * FROM users WHERE id = 1;
 ```
 
 Meta commands include `.help`, `.btree`, and `.exit`.
