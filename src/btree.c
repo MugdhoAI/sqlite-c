@@ -213,7 +213,6 @@ static void write_metadata(BTree *tree)
     write_u32(page + 4U, META_VERSION);
     write_u32(page + 8U, tree->root_page);
     write_u32(page + 12U, tree->row_count);
-    (void)pager_flush(tree->pager, 0);
 }
 
 static uint32_t leaf_find_index(const unsigned char *page, int id)
@@ -268,11 +267,6 @@ static uint32_t max_key(const BTree *tree, uint32_t page_number, BTreeResult *re
     return max_key(tree, internal_right_child(page), result);
 }
 
-static BTreeResult flush_page(BTree *tree, uint32_t page_number)
-{
-    return pager_flush(tree->pager, page_number) == PAGER_OK ? BTREE_OK : BTREE_IO_ERROR;
-}
-
 static BTreeResult update_parent_separator(BTree *tree, uint32_t leaf_page)
 {
     BTreeResult result;
@@ -298,7 +292,7 @@ static BTreeResult update_parent_separator(BTree *tree, uint32_t leaf_page)
             if (result != BTREE_OK) {
                 return result;
             }
-            return flush_page(tree, parent_page);
+            return BTREE_OK;
         }
     }
 
@@ -364,7 +358,7 @@ static BTreeResult internal_insert(BTree *tree, uint32_t parent_page,
     }
     set_node_parent(right, parent_page);
 
-    return flush_page(tree, parent_page);
+    return BTREE_OK;
 }
 
 static BTreeResult create_root_from_split(BTree *tree,
@@ -407,7 +401,7 @@ static BTreeResult create_root_from_split(BTree *tree,
         return result;
     }
 
-    return flush_page(tree, old_root);
+    return BTREE_OK;
 }
 
 static BTreeResult split_leaf(BTree *tree, uint32_t leaf_page,
@@ -482,12 +476,7 @@ static BTreeResult split_leaf(BTree *tree, uint32_t leaf_page,
         return result;
     }
 
-    result = flush_page(tree, leaf_page);
-    if (result != BTREE_OK) {
-        return result;
-    }
-
-    return flush_page(tree, new_page_number);
+    return BTREE_OK;
 }
 
 BTree *btree_open(Pager *pager, BTreeResult *result)
@@ -603,7 +592,6 @@ BTreeResult btree_insert(BTree *tree, const Row *row)
                 result = split_leaf(tree, page_number, row->id, row);
                 if (result == BTREE_OK) {
                     ++tree->row_count;
-                    write_metadata(tree);
                 }
                 return result;
             }
@@ -614,18 +602,12 @@ BTreeResult btree_insert(BTree *tree, const Row *row)
 
             serialize_row(leaf_cell(page, index), row);
             set_node_count(page, count + 1U);
-            result = flush_page(tree, page_number);
-            if (result != BTREE_OK) {
-                return result;
-            }
-
             result = update_parent_separator(tree, page_number);
             if (result != BTREE_OK) {
                 return result;
             }
 
             ++tree->row_count;
-            write_metadata(tree);
             return BTREE_OK;
         }
 
