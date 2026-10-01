@@ -267,11 +267,6 @@ static uint32_t max_key(const BTree *tree, uint32_t page_number, BTreeResult *re
     return max_key(tree, internal_right_child(page), result);
 }
 
-static BTreeResult flush_page(BTree *tree, uint32_t page_number)
-{
-    return pager_flush(tree->pager, page_number) == PAGER_OK ? BTREE_OK : BTREE_IO_ERROR;
-}
-
 static BTreeResult update_parent_separator(BTree *tree, uint32_t leaf_page)
 {
     BTreeResult result;
