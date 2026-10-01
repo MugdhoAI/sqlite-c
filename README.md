@@ -44,15 +44,17 @@ db > .btree
 db > .exit
 ```
 
+![sqlite-c shell demo](docs/images/demo.png)
+
 The database is persisted to `build/sqlite.db`, so data can be written, the process closed, and the database reopened later.
+
+![sqlite-c persistence demonstration](docs/images/persistence.png)
 
 ## Visual documentation
 
 The repository includes visual documentation for the shell workflow, B tree structure, and storage architecture.
 
-![sqlite-c shell demo](docs/images/demo.svg)
-
-![B tree after the first leaf split](docs/images/btree.svg)
+![B tree after the first leaf split](docs/images/btree-split.png)
 
 ![sqlite-c architecture](docs/images/architecture.svg)
 
@@ -120,6 +122,8 @@ Leaf pages contain fixed size row cells and a pointer to the next leaf. The curr
 
 The root remains stable when the first leaf split occurs by converting the original root page into an internal node and moving the previous leaf contents into a new child page.
 
+![B tree split from the current implementation](docs/images/btree-split.png)
+
 ### Pager
 
 `src/pager.c` manages fixed size 4096 byte pages backed by the database file. Pages are loaded into memory on demand and flushed back to disk when required.
@@ -152,6 +156,8 @@ Run it with:
 ```bash
 make benchmark
 ```
+
+![sqlite-c benchmark](docs/images/benchmark.png)
 
 Record benchmark results only from the current build and environment. Do not compare numbers across machines without noting the compiler, operating system, and build flags.
 
