@@ -2,21 +2,21 @@
 
 A small SQLite-inspired relational database engine built from scratch in C11.
 
-The project focuses on the storage mechanisms behind a database rather than reproducing SQLite's full feature set. It currently includes a persistent page-based storage layer, B-tree table storage, a small SQL parser, an interactive shell, automated tests, a benchmark, and sanitizer coverage.
+The project focuses on the storage mechanisms behind a database rather than reproducing SQLite's full feature set. It currently includes a persistent storage layer built around fixed size pages, B tree table storage, a small SQL parser, an interactive shell, automated tests, a benchmark, and sanitizer coverage.
 
-The database file format is intentionally project-specific and is not compatible with SQLite database files.
+The database file format is intentionally project specific and is not compatible with SQLite database files.
 
 ## Why this project exists
 
 Database engines hide several systems problems behind a simple API:
 
-- How rows are represented on disk
-- How fixed-size pages are loaded and flushed
-- How records remain ordered as the tree grows
-- How a B-tree routes lookups and handles leaf splits
-- How persistence survives closing and reopening the database
-- How a SQL command becomes an operation on stored data
-- How low-level C code is tested for correctness and memory errors
+How rows are represented on disk
+How fixed size pages are loaded and flushed
+How records remain ordered as the tree grows
+How a B tree routes lookups and handles leaf splits
+How persistence survives closing and reopening the database
+How a SQL command becomes an operation on stored data
+How low level C code is tested for correctness and memory errors
 
 sqlite-c makes those mechanisms explicit in a small codebase that can be read, built, tested, and inspected end to end.
 
@@ -62,17 +62,17 @@ These visuals document the current design. Real terminal screenshots from the cu
 | --- | --- |
 | Language | C11 |
 | SQL surface | INSERT and SELECT, including `WHERE id = ...` |
-| Storage | Persistent fixed-size pages |
+| Storage | Persistent fixed size pages |
 | Page size | 4096 bytes |
-| Index structure | B-tree with leaf pages and an internal root |
-| Persistence | Database metadata and B-tree pages flushed to disk |
-| Shell | Interactive command-line interface |
+| Index structure | B tree with leaf pages and an internal root |
+| Persistence | Database metadata and B tree pages flushed to disk |
+| Shell | Interactive command line interface |
 | Validation | Row ID, username, email, duplicate-key checks |
-| Testing | Database, B-tree, pager, and parser tests |
+| Testing | Database, B tree, pager, and parser tests |
 | Benchmarking | 1,000-row insertion benchmark |
 | CI | Strict compiler warnings, benchmark smoke test, ASan and UBSan |
 
-The current storage design supports up to 100 pages. Internal-node splitting beyond the current root is intentionally deferred until the page-capacity model is expanded.
+The current storage design supports up to 100 pages. Internal-node splitting beyond the current root is intentionally deferred until the page capacity model is expanded.
 
 ## Architecture
 
@@ -88,7 +88,7 @@ The implementation is split into small layers with explicit responsibilities:
                   Table API
                        │
                        ▼
-                     B-tree
+                     B tree
                   ┌────┴────┐
                   │         │
              Leaf pages  Root index
@@ -112,13 +112,13 @@ The implementation is split into small layers with explicit responsibilities:
 
 `src/database.c` validates rows and exposes the public table operations used by the shell and tests. It also maintains the ordered in-memory result view used by the shell.
 
-The persistent source of truth is the B-tree.
+The persistent source of truth is the B tree.
 
-### B-tree
+### B tree
 
 `src/btree.c` stores rows in ordered leaf pages.
 
-Leaf pages contain fixed-size row cells and a pointer to the next leaf. The current internal root stores child page numbers and separator keys. When a leaf becomes full, it is split and the new sibling is inserted into its parent.
+Leaf pages contain fixed size row cells and a pointer to the next leaf. The current internal root stores child page numbers and separator keys. When a leaf becomes full, it is split and the new sibling is inserted into its parent.
 
 The root remains stable when the first leaf split occurs by converting the original root page into an internal node and moving the previous leaf contents into a new child page.
 
@@ -126,7 +126,7 @@ The root remains stable when the first leaf split occurs by converting the origi
 
 `src/pager.c` manages fixed-size 4096-byte pages backed by the database file. Pages are loaded into memory on demand and flushed back to disk when required.
 
-Page zero stores database metadata. The remaining pages contain B-tree nodes.
+Page zero stores database metadata. The remaining pages contain B tree nodes.
 
 ### File format
 
@@ -141,7 +141,7 @@ root page number
 row count
 ```
 
-B-tree pages use a compact fixed layout designed to keep the storage implementation understandable.
+B tree pages use a compact fixed layout designed to keep the storage implementation understandable.
 
 ## Performance
 
@@ -161,15 +161,15 @@ Record benchmark results only from the current build and environment. Do not com
 
 The test suite covers:
 
-- Insert and read behavior
-- Persistence across close and reopen
-- B-tree leaf splitting
-- Ordered traversal
-- Duplicate-key rejection
-- Point lookup
-- Input validation
-- Pager behavior
-- SQL parser behavior
+Insert and read behavior
+Persistence across close and reopen
+B tree leaf splitting
+Ordered traversal
+Duplicate-key rejection
+Point lookup
+Input validation
+Pager behavior
+SQL parser behavior
 
 Run the full test suite:
 
@@ -185,21 +185,21 @@ make benchmark
 
 CI also builds with strict warnings and runs the tests with:
 
-- AddressSanitizer
-- UndefinedBehaviorSanitizer
-- `-Wall`
-- `-Wextra`
-- `-Wpedantic`
-- `-Wconversion`
-- `-Wshadow`
-- `-Werror`
+AddressSanitizer
+UndefinedBehaviorSanitizer
+`-Wall`
+`-Wextra`
+`-Wpedantic`
+`-Wconversion`
+`-Wshadow`
+`-Werror`
 
 ## Installation
 
 Requirements:
 
-- C11-compatible compiler
-- GNU Make
+C11-compatible compiler
+GNU Make
 
 Build:
 
@@ -245,19 +245,19 @@ A legacy short insert form is also retained for quick experiments.
 
 ### Fixed-size pages
 
-Using 4096-byte pages keeps the pager and B-tree layout predictable. The trade-off is that the current implementation has a deliberately small capacity and does not attempt to model SQLite's full page-management system.
+Using 4096-byte pages keeps the pager and B tree layout predictable. The trade-off is that the current implementation has a deliberately small capacity and does not attempt to model SQLite's full page management system.
 
 ### Fixed-size rows
 
-Rows use fixed-size username and email fields. This makes serialization straightforward and keeps B-tree cells simple, at the cost of unused space for short values.
+Rows use fixed size username and email fields. This makes serialization straightforward and keeps B tree cells simple, at the cost of unused space for short values.
 
 ### Project-specific file format
 
-The on-disk format is intentionally simple instead of matching SQLite's format. This keeps the implementation focused on database-engineering concepts rather than compatibility work.
+The on disk format is intentionally simple instead of matching SQLite's format. This keeps the implementation focused on database engineering concepts rather than compatibility work.
 
 ### Root-only internal routing
 
-The current implementation supports an internal root with multiple leaf children. Splitting deeper internal levels is deferred. This is a conscious scope boundary rather than an attempt to claim a production-ready B-tree implementation.
+The current implementation supports an internal root with multiple leaf children. Splitting deeper internal levels is deferred. This is a conscious scope boundary rather than an attempt to claim a production ready B tree implementation.
 
 ### Small SQL grammar
 
@@ -268,7 +268,7 @@ The parser handles only the commands needed by the current storage engine. A lar
 ```text
 sqlite-c/
 ├── include/       public interfaces
-├── src/           database, B-tree, pager, parser, shell
+├── src/           database, B tree, pager, parser, shell
 ├── tests/         database, pager, and parser tests
 ├── bench/         insertion benchmark
 ├── docs/          architecture notes
@@ -281,14 +281,14 @@ sqlite-c/
 
 The next meaningful extensions are:
 
-- Deeper B-tree internal-node splitting
-- More complete SQL parsing
-- DELETE and UPDATE
-- Transactions and stronger durability guarantees
-- More comprehensive integration tests
-- Profiling and repeatable benchmark reporting
-- More detailed documentation of page and node layouts
-- Additional indexes and query execution paths
+Deeper B tree internal-node splitting
+More complete SQL parsing
+DELETE and UPDATE
+Transactions and stronger durability guarantees
+More comprehensive integration tests
+Profiling and repeatable benchmark reporting
+More detailed documentation of page and node layouts
+Additional indexes and query execution paths
 
 ## License
 
