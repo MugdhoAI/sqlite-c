@@ -50,14 +50,6 @@ The database is persisted to `build/sqlite.db`, so data can be written, the proc
 
 ![sqlite-c persistence demonstration](docs/images/persistence.png)
 
-## Visual documentation
-
-The repository includes visual documentation for the shell workflow, B tree structure, and storage architecture.
-
-![B tree after the first leaf split](docs/images/btree.svg)
-
-![sqlite-c architecture](docs/images/architecture.svg)
-
 ## What is implemented
 
 | Component | Implementation |
@@ -99,6 +91,8 @@ The current storage design supports up to 100 pages. Internal node splitting bey
                   ▼
              Database file
 ```
+
+![sqlite-c architecture](docs/images/architecture.svg)
 
 ### Shell
 
