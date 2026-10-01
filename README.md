@@ -54,7 +54,7 @@ The database is persisted to `build/sqlite.db`, so data can be written, the proc
 
 The repository includes visual documentation for the shell workflow, B tree structure, and storage architecture.
 
-![B tree after the first leaf split](docs/images/btree-split.png)
+![B tree after the first leaf split](docs/images/btree.svg)
 
 ![sqlite-c architecture](docs/images/architecture.svg)
 
