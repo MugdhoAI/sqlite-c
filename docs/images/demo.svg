@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620">
+<rect width="1100" height="620" rx="18" fill="#111318"/>
+<rect x="0" y="0" width="1100" height="54" rx="18" fill="#1b1e24"/>
+<circle cx="28" cy="27" r="7" fill="#ff5f57"/><circle cx="52" cy="27" r="7" fill="#febc2e"/><circle cx="76" cy="27" r="7" fill="#28c840"/>
+<text x="105" y="34" fill="#d7dae0" font-family="monospace" font-size="18">sqlite-c demo</text>
+<text x="36" y="92" fill="#8be28b" font-family="monospace" font-size="18">db &gt;</text><text x="88" y="92" fill="#e7e9ed" font-family="monospace" font-size="18">INSERT INTO users VALUES (1, 'alice', 'alice@example.com');</text>
+<text x="36" y="128" fill="#8be28b" font-family="monospace" font-size="18">db &gt;</text><text x="88" y="128" fill="#e7e9ed" font-family="monospace" font-size="18">INSERT INTO users VALUES (2, 'bob', 'bob@example.com');</text>
+<text x="36" y="164" fill="#8be28b" font-family="monospace" font-size="18">db &gt;</text><text x="88" y="164" fill="#e7e9ed" font-family="monospace" font-size="18">SELECT * FROM users;</text>
+<text x="52" y="204" fill="#e7e9ed" font-family="monospace" font-size="18">1 | alice | alice@example.com</text>
+<text x="52" y="236" fill="#e7e9ed" font-family="monospace" font-size="18">2 | bob   | bob@example.com</text>
+<text x="36" y="282" fill="#8be28b" font-family="monospace" font-size="18">db &gt;</text><text x="88" y="282" fill="#e7e9ed" font-family="monospace" font-size="18">SELECT * FROM users WHERE id = 2;</text>
+<text x="52" y="322" fill="#e7e9ed" font-family="monospace" font-size="18">2 | bob | bob@example.com</text>
+<text x="36" y="368" fill="#8be28b" font-family="monospace" font-size="18">db &gt;</text><text x="88" y="368" fill="#e7e9ed" font-family="monospace" font-size="18">.btree</text>
+<text x="52" y="408" fill="#e7e9ed" font-family="monospace" font-size="18">B tree:</text>
+<text x="70" y="440" fill="#e7e9ed" font-family="monospace" font-size="18">leaf (rows 2)</text>
+<text x="88" y="472" fill="#b9c0ca" font-family="monospace" font-size="18">1</text>
+<text x="88" y="504" fill="#b9c0ca" font-family="monospace" font-size="18">2</text>
+<text x="36" y="566" fill="#8be28b" font-family="monospace" font-size="16">example session</text>
+</svg>
