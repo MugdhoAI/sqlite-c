@@ -716,19 +716,19 @@ static void print_node(const BTree *tree, uint32_t page_number, unsigned int dep
     print_indent(depth);
 
     if (node_type(page) == NODE_LEAF) {
-        printf("leaf (rows %u)\\n", node_count(page));
+        printf("leaf (rows %u)\n", node_count(page));
         for (uint32_t i = 0; i < node_count(page); ++i) {
             print_indent(depth + 1U);
-            printf("%u\\n", leaf_key(page, i));
+            printf("%u\n", leaf_key(page, i));
         }
         return;
     }
 
-    printf("internal (keys %u)\\n", node_count(page));
+    printf("internal (keys %u)\n", node_count(page));
     for (uint32_t i = 0; i < node_count(page); ++i) {
         print_node(tree, internal_child(page, i), depth + 1U);
         print_indent(depth + 1U);
-        printf("separator %u\\n", internal_key(page, i));
+        printf("separator %u\n", internal_key(page, i));
     }
     print_node(tree, internal_right_child(page), depth + 1U);
 }
