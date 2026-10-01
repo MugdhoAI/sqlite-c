@@ -71,6 +71,7 @@ static unsigned char *page_for(BTree *tree, uint32_t page_number, BTreeResult *r
         return NULL;
     }
 
+    *result = BTREE_OK;
     return page;
 }
 
@@ -407,7 +408,7 @@ static BTreeResult create_root_from_split(BTree *tree,
 static BTreeResult split_leaf(BTree *tree, uint32_t leaf_page,
                               int id, const Row *row)
 {
-    BTreeResult result;
+    BTreeResult result = BTREE_IO_ERROR;
     unsigned char *old_page = page_for(tree, leaf_page, &result);
     if (old_page == NULL) {
         return result;
