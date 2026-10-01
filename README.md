@@ -46,7 +46,15 @@ db > .exit
 
 The database is persisted to `build/sqlite.db`, so data can be written, the process closed, and the database reopened later.
 
-For the repository showcase, the most useful visuals are an actual terminal capture of this workflow and a B-tree output capture after inserting enough rows to trigger a leaf split. These should be generated from the current build rather than using mock screenshots.
+The repository includes visual documentation for the shell, B tree structure, and storage architecture. The terminal visual shows the supported workflow, while the B tree visual shows the first leaf split.
+
+![sqlite-c shell demo](docs/images/demo.svg)
+
+![B tree after the first leaf split](docs/images/btree.svg)
+
+![sqlite-c architecture](docs/images/architecture.svg)
+
+These visuals document the current design. Real terminal screenshots from the current build can be added later when benchmark and demonstration captures are collected.
 
 ## What is implemented
 
@@ -134,6 +142,20 @@ row count
 ```
 
 B-tree pages use a compact fixed layout designed to keep the storage implementation understandable.
+
+## Performance
+
+The benchmark inserts 1,000 rows through the public table API and measures the insertion phase. The benchmark is intended for repeatable local comparisons rather than as a claim of production database performance.
+
+The current write path keeps modified pages in the pager cache during inserts and persists them during an explicit flush. This avoids performing a file write and fflush for every inserted row.
+
+Run it with:
+
+```bash
+make benchmark
+```
+
+Record benchmark results only from the current build and environment. Do not compare numbers across machines without noting the compiler, operating system, and build flags.
 
 ## Testing and verification
 
