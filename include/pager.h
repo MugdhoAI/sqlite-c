@@ -22,7 +22,7 @@ typedef struct {
 } Pager;
 
 Pager *pager_open(const char *filename, PagerResult *result);
-void pager_close(Pager *pager);
+PagerResult pager_close(Pager *pager);
 void *pager_get_page(Pager *pager, size_t page_number, PagerResult *result);
 PagerResult pager_flush(Pager *pager, size_t page_number);
 
