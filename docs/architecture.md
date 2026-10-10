@@ -59,8 +59,9 @@ Responsibilities include:
 - maintaining the ordered in-memory result view
 - exposing point lookup and row iteration
 - translating lower-level errors into public results
+- reporting flush failures through `table_close`
 
-The persistent source of truth is the B-tree.
+The persistent source of truth is the B-tree. On open, the engine validates node types and capacities, page references, parent links, key ordering, separator values, leaf-chain order, and the metadata row count. Malformed database files are rejected before normal traversal begins.
 
 ## B-tree
 
@@ -120,7 +121,7 @@ B-tree pages use a compact fixed layout. Rows are serialized directly into fixed
 
 ## Testing
 
-The storage tests exercise persistence, ordering, B-tree leaf splitting, duplicate detection, point lookup, and validation.
+The storage tests exercise persistence, ordering, B-tree leaf splitting, duplicate detection, point lookup, row validation, and rejection of malformed metadata and B-tree pages. Parser tests cover numeric overflow, and a shell integration test verifies that oversized commands are rejected without partial execution.
 
 The parser and pager have separate test binaries. CI additionally builds with strict warnings and runs the suite under AddressSanitizer and UndefinedBehaviorSanitizer.
 
