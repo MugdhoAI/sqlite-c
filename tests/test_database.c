@@ -224,7 +224,7 @@ static void test_corrupt_node_count_is_rejected(void)
     SqliteResult result;
     Table *table = table_open(filename, &result);
     assert(table == NULL);
-    assert(result != SQLITE_OK);
+    assert(result == SQLITE_CORRUPT);
     remove(filename);
 }
 
