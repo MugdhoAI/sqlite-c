@@ -14,13 +14,18 @@ struct Table {
     size_t size;
 };
 
-static int valid_text(const char *value, size_t max_length)
+static int valid_text(const char *value, size_t buffer_size, size_t max_length)
 {
-    if (value == NULL || value[0] == '\0') {
+    if (value == NULL || buffer_size == 0U || value[0] == '\0') {
         return 0;
     }
 
-    return strlen(value) <= max_length;
+    size_t length = 0;
+    while (length < buffer_size && value[length] != '\0') {
+        ++length;
+    }
+
+    return length < buffer_size && length <= max_length;
 }
 
 static Table *allocate_table(void)
@@ -138,11 +143,11 @@ SqliteResult table_insert(Table *table, const Row *row)
         return SQLITE_INVALID_ID;
     }
 
-    if (!valid_text(row->username, SQLITE_USERNAME_MAX)) {
+    if (!valid_text(row->username, sizeof(row->username), SQLITE_USERNAME_MAX)) {
         return SQLITE_INVALID_USERNAME;
     }
 
-    if (!valid_text(row->email, SQLITE_EMAIL_MAX)) {
+    if (!valid_text(row->email, sizeof(row->email), SQLITE_EMAIL_MAX)) {
         return SQLITE_INVALID_EMAIL;
     }
 
