@@ -31,6 +31,7 @@ typedef struct Table Table;
 
 Table *table_open(const char *filename, SqliteResult *result);
 void table_destroy(Table *table);
+SqliteResult table_close(Table *table);
 SqliteResult table_flush(Table *table);
 void table_print_tree(const Table *table);
 
