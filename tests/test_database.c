@@ -242,7 +242,7 @@ static void test_corrupt_metadata_page_is_rejected(void)
     SqliteResult result;
     Table *table = table_open(filename, &result);
     assert(table == NULL);
-    assert(result != SQLITE_OK);
+    assert(result == SQLITE_CORRUPT);
     remove(filename);
 }
 
@@ -258,7 +258,7 @@ static void test_corrupt_child_reference_is_rejected(void)
     SqliteResult result;
     Table *table = table_open(filename, &result);
     assert(table == NULL);
-    assert(result != SQLITE_OK);
+    assert(result == SQLITE_CORRUPT);
     remove(filename);
 }
 
