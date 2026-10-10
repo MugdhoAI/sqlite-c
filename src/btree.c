@@ -584,6 +584,12 @@ static int validate_tree(BTree *tree)
         return 0;
     }
 
+    for (size_t page_number = 1U; page_number < tree->pager->num_pages; ++page_number) {
+        if (visited[page_number] == 0U) {
+            return 0;
+        }
+    }
+
     for (size_t i = 0; i < leaf_count; ++i) {
         BTreeResult result;
         const unsigned char *leaf = const_page_for(tree, leaf_pages[i], &result);
