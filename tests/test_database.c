@@ -105,8 +105,9 @@ static void test_btree_mixed_insertion_order(void)
     for (int id = 1; id <= 80; ++id) {
         Row found = {0};
         assert(table_find(table, id, &found) == SQLITE_OK);
+        Row expected = make_row(id);
         assert(found.id == id);
-        assert(strcmp(found.username, make_row(id).username) == 0);
+        assert(strcmp(found.username, expected.username) == 0);
     }
 
     table_destroy(table);
