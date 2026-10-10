@@ -85,6 +85,46 @@ static void test_btree_split_and_order(void)
     remove(filename);
 }
 
+static void test_btree_mixed_insertion_order(void)
+{
+    const char *filename = "build/test_btree_mixed.db";
+    remove(filename);
+
+    SqliteResult result;
+    Table *table = table_open(filename, &result);
+    assert(table != NULL);
+
+    for (int i = 0; i < 80; ++i) {
+        int id = ((i * 37) % 80) + 1;
+        Row row = make_row(id);
+        assert(table_insert(table, &row) == SQLITE_OK);
+    }
+
+    assert(table_size(table) == 80);
+
+    for (int id = 1; id <= 80; ++id) {
+        Row found = {0};
+        assert(table_find(table, id, &found) == SQLITE_OK);
+        assert(found.id == id);
+        assert(strcmp(found.username, make_row(id).username) == 0);
+    }
+
+    table_destroy(table);
+
+    table = table_open(filename, &result);
+    assert(table != NULL);
+    assert(table_size(table) == 80);
+
+    for (size_t i = 0; i < table_size(table); ++i) {
+        const Row *row = table_row_at(table, i);
+        assert(row != NULL);
+        assert(row->id == (int)i + 1);
+    }
+
+    table_destroy(table);
+    remove(filename);
+}
+
 static void test_lookup(void)
 {
     const char *filename = "build/test_lookup.db";
@@ -144,6 +184,7 @@ int main(void)
 {
     test_insert_and_read();
     test_btree_split_and_order();
+    test_btree_mixed_insertion_order();
     test_lookup();
     test_validation();
     return 0;
