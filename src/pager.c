@@ -59,21 +59,27 @@ Pager *pager_open(const char *filename, PagerResult *result)
     return pager;
 }
 
-void pager_close(Pager *pager)
+PagerResult pager_close(Pager *pager)
 {
     if (pager == NULL) {
-        return;
+        return PAGER_INVALID_ARGUMENT;
     }
 
+    PagerResult result = PAGER_OK;
     for (size_t page_number = 0; page_number < pager->num_pages; ++page_number) {
         if (pager->pages[page_number] != NULL) {
-            (void)pager_flush(pager, page_number);
+            if (pager_flush(pager, page_number) != PAGER_OK) {
+                result = PAGER_IO_ERROR;
+            }
             free(pager->pages[page_number]);
         }
     }
 
-    fclose(pager->file);
+    if (fclose(pager->file) != 0) {
+        result = PAGER_IO_ERROR;
+    }
     free(pager);
+    return result;
 }
 
 void *pager_get_page(Pager *pager, size_t page_number, PagerResult *result)

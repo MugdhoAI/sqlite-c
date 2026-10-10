@@ -60,6 +60,16 @@ static void test_meta_command(void)
     assert(statement.type == META_BTREE);
 }
 
+static void test_numeric_overflow_is_rejected(void)
+{
+    Statement statement;
+    assert(parse_statement(
+        "INSERT INTO users VALUES (2147483648, 'alice', 'alice@example.com');",
+        &statement) == PARSER_SYNTAX_ERROR);
+    assert(parse_statement("SELECT * FROM users WHERE id = 999999999999999999999;",
+                           &statement) == PARSER_SYNTAX_ERROR);
+}
+
 static void test_invalid_input(void)
 {
     Statement statement;
@@ -77,5 +87,6 @@ int main(void)
     test_select_allows_trailing_whitespace();
     test_meta_command();
     test_invalid_input();
+    test_numeric_overflow_is_rejected();
     return 0;
 }

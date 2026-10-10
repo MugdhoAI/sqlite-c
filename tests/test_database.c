@@ -30,7 +30,7 @@ static void test_insert_and_read(void)
     assert(table_insert(table, &second) == SQLITE_OK);
     assert(table_size(table) == 2);
 
-    table_destroy(table);
+    assert(table_close(table) == SQLITE_OK);
 
     table = table_open(filename, &result);
     assert(table != NULL);
@@ -42,7 +42,7 @@ static void test_insert_and_read(void)
     assert(strcmp(row->username, "user2") == 0);
     assert(strcmp(row->email, "user2@example.com") == 0);
 
-    table_destroy(table);
+    assert(table_close(table) == SQLITE_OK);
     remove(filename);
 }
 
@@ -181,6 +181,87 @@ static void test_validation(void)
     remove(filename);
 }
 
+
+static void write_u32_le(FILE *file, long offset, unsigned int value)
+{
+    unsigned char bytes[4] = {
+        (unsigned char)(value & 0xffU),
+        (unsigned char)((value >> 8U) & 0xffU),
+        (unsigned char)((value >> 16U) & 0xffU),
+        (unsigned char)((value >> 24U) & 0xffU)
+    };
+
+    assert(fseek(file, offset, SEEK_SET) == 0);
+    assert(fwrite(bytes, sizeof(bytes), 1, file) == 1);
+    assert(fclose(file) == 0);
+}
+
+static void create_database_with_split(const char *filename)
+{
+    remove(filename);
+    SqliteResult result;
+    Table *table = table_open(filename, &result);
+    assert(table != NULL);
+
+    for (int id = 1; id <= 20; ++id) {
+        Row row = make_row(id);
+        assert(table_insert(table, &row) == SQLITE_OK);
+    }
+
+    assert(table_flush(table) == SQLITE_OK);
+    table_destroy(table);
+}
+
+static void test_corrupt_node_count_is_rejected(void)
+{
+    const char *filename = "build/test_corrupt_count.db";
+    create_database_with_split(filename);
+
+    FILE *file = fopen(filename, "r+b");
+    assert(file != NULL);
+    write_u32_le(file, (long)PAGE_SIZE + 8L, 0xffffffffU);
+
+    SqliteResult result;
+    Table *table = table_open(filename, &result);
+    assert(table == NULL);
+    assert(result == SQLITE_CORRUPT);
+    remove(filename);
+}
+
+static void test_corrupt_metadata_page_is_rejected(void)
+{
+    const char *filename = "build/test_corrupt_metadata.db";
+    remove(filename);
+
+    FILE *file = fopen(filename, "wb");
+    assert(file != NULL);
+    unsigned char page[PAGE_SIZE] = {0};
+    assert(fwrite(page, sizeof(page), 1, file) == 1);
+    assert(fclose(file) == 0);
+
+    SqliteResult result;
+    Table *table = table_open(filename, &result);
+    assert(table == NULL);
+    assert(result == SQLITE_CORRUPT);
+    remove(filename);
+}
+
+static void test_corrupt_child_reference_is_rejected(void)
+{
+    const char *filename = "build/test_corrupt_child.db";
+    create_database_with_split(filename);
+
+    FILE *file = fopen(filename, "r+b");
+    assert(file != NULL);
+    write_u32_le(file, (long)PAGE_SIZE + 16L, 0U);
+
+    SqliteResult result;
+    Table *table = table_open(filename, &result);
+    assert(table == NULL);
+    assert(result == SQLITE_CORRUPT);
+    remove(filename);
+}
+
 int main(void)
 {
     test_insert_and_read();
@@ -188,5 +269,8 @@ int main(void)
     test_btree_mixed_insertion_order();
     test_lookup();
     test_validation();
+    test_corrupt_node_count_is_rejected();
+    test_corrupt_metadata_page_is_rejected();
+    test_corrupt_child_reference_is_rejected();
     return 0;
 }

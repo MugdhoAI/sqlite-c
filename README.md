@@ -61,7 +61,7 @@ The database is persisted to `build/sqlite.db`, so data can be written, the proc
 | Index structure | B tree with leaf pages and an internal root |
 | Persistence | Database metadata and B tree pages flushed to disk |
 | Shell | Interactive command line interface |
-| Validation | Row ID, username, email, duplicate key checks |
+| Validation | Row fields, duplicate keys, and persisted B tree structure |
 | Testing | Database, B tree, pager, and parser tests |
 | Benchmarking | 1,000 row insertion benchmark |
 | CI | Strict compiler warnings, benchmark smoke test, ASan and UBSan |
@@ -104,7 +104,7 @@ The current storage design supports up to 100 pages. Internal node splitting bey
 
 ### Table API
 
-`src/database.c` validates rows and exposes the public table operations used by the shell and tests. It also maintains the ordered in memory result view used by the shell.
+`src/database.c` validates rows and exposes the public table operations used by the shell and tests. It maintains the ordered in memory result view used by the shell. Use `table_close` when the caller needs to detect persistence failures; `table_destroy` remains a compatibility wrapper.
 
 The persistent source of truth is the B tree.
 
@@ -166,8 +166,11 @@ Ordered traversal
 Duplicate key rejection
 Point lookup
 Input validation
+Malformed database rejection
 Pager behavior
-SQL parser behavior
+SQL parser overflow handling
+Oversized shell command rejection
+Checked close and persistence errors
 
 Run the full test suite:
 

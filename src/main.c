@@ -51,6 +51,14 @@ int main(void)
             break;
         }
 
+        if (strchr(input, '\n') == NULL && !feof(stdin)) {
+            int ch;
+            while ((ch = getchar()) != '\n' && ch != EOF) {
+            }
+            puts("command too long");
+            continue;
+        }
+
         input[strcspn(input, "\n")] = '\0';
 
         Statement statement;
@@ -94,12 +102,10 @@ int main(void)
     }
 
 done:
-    if (table_flush(table) != SQLITE_OK) {
+    if (table_close(table) != SQLITE_OK) {
         fputs("failed to flush database\n", stderr);
-        table_destroy(table);
         return 1;
     }
 
-    table_destroy(table);
     return 0;
 }

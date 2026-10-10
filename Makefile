@@ -30,10 +30,11 @@ $(BUILD_DIR)/test_pager: $(TEST_DIR)/test_pager.c $(SRC_DIR)/pager.c | $(BUILD_D
 $(BUILD_DIR)/test_parser: $(TEST_DIR)/test_parser.c $(SRC_DIR)/parser.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
-test: $(TEST_TARGET) $(BUILD_DIR)/test_pager $(BUILD_DIR)/test_parser
+test: $(TARGET) $(TEST_TARGET) $(BUILD_DIR)/test_pager $(BUILD_DIR)/test_parser
 	./$(TEST_TARGET)
 	./$(BUILD_DIR)/test_pager
 	./$(BUILD_DIR)/test_parser
+	sh $(TEST_DIR)/test_shell.sh
 
 $(BUILD_DIR)/benchmark: bench/benchmark.c $(SRC_DIR)/database.c $(SRC_DIR)/btree.c $(SRC_DIR)/pager.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@

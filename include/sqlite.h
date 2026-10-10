@@ -18,7 +18,8 @@ typedef enum {
     SQLITE_INVALID_EMAIL,
     SQLITE_DUPLICATE_ID,
     SQLITE_ROW_NOT_FOUND,
-    SQLITE_IO_ERROR
+    SQLITE_IO_ERROR,
+    SQLITE_CORRUPT
 } SqliteResult;
 
 typedef struct {
@@ -31,6 +32,7 @@ typedef struct Table Table;
 
 Table *table_open(const char *filename, SqliteResult *result);
 void table_destroy(Table *table);
+SqliteResult table_close(Table *table);
 SqliteResult table_flush(Table *table);
 void table_print_tree(const Table *table);
 

@@ -202,18 +202,19 @@ static uint32_t allocate_page(BTree *tree, BTreeResult *result)
     return page_number;
 }
 
-static void write_metadata(BTree *tree)
+static BTreeResult write_metadata(BTree *tree)
 {
     BTreeResult result;
     unsigned char *page = page_for(tree, 0, &result);
     if (page == NULL) {
-        return;
+        return result;
     }
 
     write_u32(page, META_MAGIC);
     write_u32(page + 4U, META_VERSION);
     write_u32(page + 8U, tree->root_page);
     write_u32(page + 12U, tree->row_count);
+    return BTREE_OK;
 }
 
 static uint32_t leaf_find_index(const unsigned char *page, int id)
@@ -480,6 +481,131 @@ static BTreeResult split_leaf(BTree *tree, uint32_t leaf_page,
     return BTREE_OK;
 }
 
+
+static int validate_node(BTree *tree, uint32_t page_number, uint32_t expected_parent,
+                         unsigned char *visited, uint32_t *leaf_pages,
+                         size_t *leaf_count, uint32_t *row_count,
+                         uint32_t *minimum, uint32_t *maximum, int is_root)
+{
+    if (page_number == 0U || page_number >= tree->pager->num_pages ||
+        page_number >= TABLE_MAX_PAGES || visited[page_number] != 0U) {
+        return 0;
+    }
+
+    visited[page_number] = 1U;
+
+    BTreeResult result;
+    const unsigned char *page = const_page_for(tree, page_number, &result);
+    if (page == NULL || result != BTREE_OK || node_parent(page) != expected_parent) {
+        return 0;
+    }
+
+    uint8_t type = node_type(page);
+    uint32_t count = node_count(page);
+
+    if (type == NODE_LEAF) {
+        if (count > LEAF_MAX_CELLS || (!is_root && count == 0U)) {
+            return 0;
+        }
+
+        uint32_t previous = 0U;
+        for (uint32_t i = 0; i < count; ++i) {
+            uint32_t key = leaf_key(page, i);
+            if (key == 0U || key > (uint32_t)INT32_MAX ||
+                (i > 0U && key <= previous)) {
+                return 0;
+            }
+            previous = key;
+        }
+
+        uint32_t next = leaf_next(page);
+        if (next >= tree->pager->num_pages && next != 0U) {
+            return 0;
+        }
+
+        leaf_pages[*leaf_count] = page_number;
+        ++(*leaf_count);
+        *row_count += count;
+        *minimum = count == 0U ? 0U : leaf_key(page, 0U);
+        *maximum = count == 0U ? 0U : leaf_key(page, count - 1U);
+        return 1;
+    }
+
+    if (type != NODE_INTERNAL || !is_root || count == 0U ||
+        count > INTERNAL_MAX_CELLS) {
+        return 0;
+    }
+
+    uint32_t previous_maximum = 0U;
+    for (uint32_t i = 0; i <= count; ++i) {
+        uint32_t child = child_page_at(page, i);
+        uint32_t child_minimum = 0U;
+        uint32_t child_maximum = 0U;
+        if (!validate_node(tree, child, page_number, visited, leaf_pages,
+                           leaf_count, row_count, &child_minimum,
+                           &child_maximum, 0)) {
+            return 0;
+        }
+
+        if (child_minimum == 0U || child_maximum == 0U ||
+            (i > 0U && child_minimum <= previous_maximum)) {
+            return 0;
+        }
+
+        if (i < count && internal_key(page, i) != child_maximum) {
+            return 0;
+        }
+
+        if (i == 0U) {
+            *minimum = child_minimum;
+        }
+        previous_maximum = child_maximum;
+    }
+
+    *maximum = previous_maximum;
+    return 1;
+}
+
+static int validate_tree(BTree *tree)
+{
+    unsigned char visited[TABLE_MAX_PAGES] = {0};
+    uint32_t leaf_pages[TABLE_MAX_PAGES] = {0};
+    size_t leaf_count = 0U;
+    uint32_t row_count = 0U;
+    uint32_t minimum = 0U;
+    uint32_t maximum = 0U;
+
+    if (!validate_node(tree, tree->root_page, 0U, visited, leaf_pages,
+                       &leaf_count, &row_count, &minimum, &maximum, 1)) {
+        return 0;
+    }
+
+    if (row_count != tree->row_count || leaf_count == 0U) {
+        return 0;
+    }
+
+    for (size_t page_number = 1U; page_number < tree->pager->num_pages; ++page_number) {
+        if (visited[page_number] == 0U) {
+            return 0;
+        }
+    }
+
+    for (size_t i = 0; i < leaf_count; ++i) {
+        BTreeResult result;
+        const unsigned char *leaf = const_page_for(tree, leaf_pages[i], &result);
+        if (leaf == NULL || result != BTREE_OK) {
+            return 0;
+        }
+
+        uint32_t expected_next = i + 1U < leaf_count ? leaf_pages[i + 1U] : 0U;
+        if (leaf_next(leaf) != expected_next) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 BTree *btree_open(Pager *pager, BTreeResult *result)
 {
     if (pager == NULL || result == NULL) {
@@ -504,7 +630,7 @@ BTree *btree_open(Pager *pager, BTreeResult *result)
         return NULL;
     }
 
-    if (pager->num_pages == 1U && read_u32(meta) == 0U) {
+    if (pager->file_length == 0U) {
         tree->root_page = 1;
         tree->row_count = 0;
 
@@ -515,7 +641,11 @@ BTree *btree_open(Pager *pager, BTreeResult *result)
         }
 
         initialize_leaf(root, 0);
-        write_metadata(tree);
+        if (write_metadata(tree) != BTREE_OK) {
+            free(tree);
+            *result = BTREE_IO_ERROR;
+            return NULL;
+        }
         return tree;
     }
 
@@ -535,6 +665,12 @@ BTree *btree_open(Pager *pager, BTreeResult *result)
         return NULL;
     }
 
+    if (!validate_tree(tree)) {
+        free(tree);
+        *result = BTREE_CORRUPT;
+        return NULL;
+    }
+
     return tree;
 }
 
@@ -544,7 +680,10 @@ BTreeResult btree_flush(BTree *tree)
         return BTREE_INVALID_ARGUMENT;
     }
 
-    write_metadata(tree);
+    BTreeResult metadata_result = write_metadata(tree);
+    if (metadata_result != BTREE_OK) {
+        return metadata_result;
+    }
 
     for (size_t page_number = 0; page_number < tree->pager->num_pages; ++page_number) {
         if (tree->pager->pages[page_number] != NULL &&
@@ -556,14 +695,15 @@ BTreeResult btree_flush(BTree *tree)
     return BTREE_OK;
 }
 
-void btree_close(BTree *tree)
+BTreeResult btree_close(BTree *tree)
 {
     if (tree == NULL) {
-        return;
+        return BTREE_INVALID_ARGUMENT;
     }
 
-    (void)btree_flush(tree);
+    BTreeResult result = btree_flush(tree);
     free(tree);
+    return result;
 }
 
 BTreeResult btree_insert(BTree *tree, const Row *row)

@@ -18,7 +18,7 @@ typedef enum {
 typedef struct BTree BTree;
 
 BTree *btree_open(Pager *pager, BTreeResult *result);
-void btree_close(BTree *tree);
+BTreeResult btree_close(BTree *tree);
 BTreeResult btree_flush(BTree *tree);
 
 BTreeResult btree_insert(BTree *tree, const Row *row);
