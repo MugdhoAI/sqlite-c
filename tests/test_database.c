@@ -124,6 +124,14 @@ static void test_validation(void)
     empty_username.username[0] = '\0';
     assert(table_insert(table, &empty_username) == SQLITE_INVALID_USERNAME);
 
+    Row unterminated_username = make_row(3);
+    memset(unterminated_username.username, 'x', sizeof(unterminated_username.username));
+    assert(table_insert(table, &unterminated_username) == SQLITE_INVALID_USERNAME);
+
+    Row unterminated_email = make_row(4);
+    memset(unterminated_email.email, 'e', sizeof(unterminated_email.email));
+    assert(table_insert(table, &unterminated_email) == SQLITE_INVALID_EMAIL);
+
     Row duplicate = make_row(2);
     assert(table_insert(table, &duplicate) == SQLITE_OK);
     assert(table_insert(table, &duplicate) == SQLITE_DUPLICATE_ID);
