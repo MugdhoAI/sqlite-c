@@ -44,15 +44,6 @@ static Table *allocate_table(void)
     return table;
 }
 
-Table *table_create(size_t capacity)
-{
-    if (capacity == 0 || capacity > TABLE_ROW_CAPACITY) {
-        return NULL;
-    }
-
-    return allocate_table();
-}
-
 Table *table_open(const char *filename, SqliteResult *result)
 {
     if (filename == NULL || result == NULL) {
