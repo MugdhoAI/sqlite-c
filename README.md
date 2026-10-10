@@ -10,13 +10,13 @@ The database file format is intentionally project specific and is not compatible
 
 Database engines hide several systems problems behind a simple API:
 
-How rows are represented on disk
-How fixed size pages are loaded and flushed
-How records remain ordered as the tree grows
-How a B tree routes lookups and handles leaf splits
-How persistence survives closing and reopening the database
-How a SQL command becomes an operation on stored data
-How low level C code is tested for correctness and memory errors
+- How rows are represented on disk
+- How fixed size pages are loaded and flushed
+- How records remain ordered as the tree grows
+- How a B tree routes lookups and handles leaf splits
+- How persistence survives closing and reopening the database
+- How a SQL command becomes an operation on stored data
+- How low level C code is tested for correctness and memory errors
 
 sqlite-c makes those mechanisms explicit in a small codebase that can be built, tested, and inspected end to end.
 
@@ -116,6 +116,8 @@ Leaf pages contain fixed size row cells and a pointer to the next leaf. The curr
 
 The root remains stable when the first leaf split occurs by converting the original root page into an internal node and moving the previous leaf contents into a new child page.
 
+On open, the engine checks database metadata and B tree structure, including node types and capacities, page references, parent links, key ordering, separator values, leaf links, and the metadata row count. These checks reject the malformed metadata and B tree structures covered by the implementation; they do not guarantee detection of every possible corrupt row field or malformed database file.
+
 ![B tree leaf split and root internal node](docs/images/btree-split.svg)
 
 ### Pager
@@ -159,18 +161,18 @@ Record benchmark results only from the current build and environment. Do not com
 
 The test suite covers:
 
-Insert and read behavior
-Persistence across close and reopen
-B tree leaf splitting
-Ordered traversal
-Duplicate key rejection
-Point lookup
-Input validation
-Malformed database rejection
-Pager behavior
-SQL parser overflow handling
-Oversized shell command rejection
-Checked close and persistence errors
+- Insert and read behavior
+- Persistence across close and reopen
+- B tree leaf splitting
+- Ordered traversal
+- Duplicate key rejection
+- Point lookup
+- Input validation
+- Rejection of malformed metadata and B tree structures covered by the tests
+- Pager behavior
+- SQL parser overflow handling
+- Oversized shell command rejection
+- Checked close and persistence errors
 
 Run the full test suite:
 
@@ -186,21 +188,21 @@ make benchmark
 
 CI also builds with strict warnings and runs the tests with:
 
-AddressSanitizer
-UndefinedBehaviorSanitizer
-`-Wall`
-`-Wextra`
-`-Wpedantic`
-`-Wconversion`
-`-Wshadow`
-`-Werror`
+- AddressSanitizer
+- UndefinedBehaviorSanitizer
+- `-Wall`
+- `-Wextra`
+- `-Wpedantic`
+- `-Wconversion`
+- `-Wshadow`
+- `-Werror`
 
 ## Installation
 
 Requirements:
 
-C11 compatible compiler
-GNU Make
+- C11 compatible compiler
+- GNU Make
 
 Build:
 
@@ -282,14 +284,14 @@ sqlite-c/
 
 The next meaningful extensions are:
 
-Deeper B tree internal node splitting
-More complete SQL parsing
-DELETE and UPDATE
-Transactions and stronger durability guarantees
-More comprehensive integration tests
-Profiling and repeatable benchmark reporting
-More detailed documentation of page and node layouts
-Additional indexes and query execution paths
+- Deeper B tree internal node splitting
+- More complete SQL parsing
+- DELETE and UPDATE
+- Transactions and stronger durability guarantees
+- More comprehensive integration tests
+- Profiling and repeatable benchmark reporting
+- More detailed documentation of page and node layouts
+- Additional indexes and query execution paths
 
 ## License
 
