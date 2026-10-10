@@ -44,7 +44,7 @@ db > .btree
 db > .exit
 ```
 
-![sqlite-c shell demo](docs/images/demo.png)
+![sqlite-c shell demo](https://raw.githubusercontent.com/MugdhoAI/sqlite-c/main/docs/images/demo.png)
 
 The database is persisted to `build/sqlite.db`, so data can be written, the process closed, and the database reopened later.
 
@@ -116,7 +116,7 @@ Leaf pages contain fixed size row cells and a pointer to the next leaf. The curr
 
 The root remains stable when the first leaf split occurs by converting the original root page into an internal node and moving the previous leaf contents into a new child page.
 
-![B tree split from the current implementation](docs/images/btree-split.png)
+![B tree split from the current implementation](https://raw.githubusercontent.com/MugdhoAI/sqlite-c/main/docs/images/btree-split.png)
 
 ### Pager
 
