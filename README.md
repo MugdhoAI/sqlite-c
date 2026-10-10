@@ -141,7 +141,7 @@ B tree pages use a compact fixed layout designed to keep the storage implementat
 
 ## Performance
 
-The benchmark inserts 1,000 rows through the public table API and measures the insertion phase. It is intended for repeatable local comparisons rather than as a claim of production database performance.
+The benchmark inserts 1,000 rows through the public table API, then flushes the database pages. It reports process CPU time from `clock()`, including both the insert loop and the flush but excluding database opening. It is intended for repeatable local comparisons rather than as a claim of production database performance.
 
 The current write path keeps modified pages in the pager cache during inserts and persists them during an explicit flush. This avoids performing a file write and fflush for every inserted row.
 
