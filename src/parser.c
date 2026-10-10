@@ -1,8 +1,24 @@
 #include "parser.h"
 
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+static int parse_positive_id(const char *text, int *id)
+{
+    char *end = NULL;
+    errno = 0;
+    long value = strtol(text, &end, 10);
+    if (errno == ERANGE || end == text || *end != '\0' ||
+        value <= 0L || value > INT_MAX) {
+        return 0;
+    }
+    *id = (int)value;
+    return 1;
+}
 
 static int valid_suffix(const char *suffix)
 {
@@ -24,10 +40,11 @@ static int valid_suffix(const char *suffix)
 static int parse_insert(const char *input, Statement *statement)
 {
     int consumed = 0;
+    char id_text[11] = {0};
     int matched = sscanf(
         input,
-        "INSERT INTO users VALUES (%d, '%32[^']', '%255[^']')%n",
-        &statement->row.id,
+        "INSERT INTO users VALUES ( %10[0-9] , '%32[^']', '%255[^']')%n",
+        id_text,
         statement->row.username,
         statement->row.email,
         &consumed
@@ -35,10 +52,11 @@ static int parse_insert(const char *input, Statement *statement)
 
     if (matched != 3) {
         consumed = 0;
+        id_text[0] = '\0';
         matched = sscanf(
             input,
-            "insert into users values (%d, '%32[^']', '%255[^']')%n",
-            &statement->row.id,
+            "insert into users values ( %10[0-9] , '%32[^']', '%255[^']')%n",
+            id_text,
             statement->row.username,
             statement->row.email,
             &consumed
@@ -46,7 +64,7 @@ static int parse_insert(const char *input, Statement *statement)
     }
 
     if (matched == 3 && consumed > 0 && valid_suffix(input + consumed) &&
-        statement->row.id > 0) {
+        parse_positive_id(id_text, &statement->row.id)) {
         statement->type = STATEMENT_INSERT;
         return 1;
     }
@@ -57,17 +75,18 @@ static int parse_insert(const char *input, Statement *statement)
 static int parse_legacy_insert(const char *input, Statement *statement)
 {
     int consumed = 0;
+    char id_text[11] = {0};
     int matched = sscanf(
         input,
-        "insert %d %32s %255s%n",
-        &statement->row.id,
+        "insert %10[0-9] %32s %255s%n",
+        id_text,
         statement->row.username,
         statement->row.email,
         &consumed
     );
 
     if (matched == 3 && consumed > 0 && valid_suffix(input + consumed) &&
-        statement->row.id > 0) {
+        parse_positive_id(id_text, &statement->row.id)) {
         statement->type = STATEMENT_INSERT;
         return 1;
     }
@@ -93,17 +112,19 @@ static int parse_select(const char *input, Statement *statement)
     }
 
     int consumed = 0;
-    int matched = sscanf(input, "SELECT * FROM users WHERE id = %d%n",
-                         &statement->where_id, &consumed);
+    char id_text[11] = {0};
+    int matched = sscanf(input, "SELECT * FROM users WHERE id = %10[0-9]%n",
+                         id_text, &consumed);
 
     if (matched != 1 || consumed <= 0 || !valid_suffix(input + consumed)) {
         consumed = 0;
-        matched = sscanf(input, "select * from users where id = %d%n",
-                         &statement->where_id, &consumed);
+        id_text[0] = '\0';
+        matched = sscanf(input, "select * from users where id = %10[0-9]%n",
+                         id_text, &consumed);
     }
 
     if (matched == 1 && consumed > 0 && valid_suffix(input + consumed) &&
-        statement->where_id > 0) {
+        parse_positive_id(id_text, &statement->where_id)) {
         statement->type = STATEMENT_SELECT;
         return 1;
     }
