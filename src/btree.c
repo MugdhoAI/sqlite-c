@@ -202,18 +202,19 @@ static uint32_t allocate_page(BTree *tree, BTreeResult *result)
     return page_number;
 }
 
-static void write_metadata(BTree *tree)
+static BTreeResult write_metadata(BTree *tree)
 {
     BTreeResult result;
     unsigned char *page = page_for(tree, 0, &result);
     if (page == NULL) {
-        return;
+        return result;
     }
 
     write_u32(page, META_MAGIC);
     write_u32(page + 4U, META_VERSION);
     write_u32(page + 8U, tree->root_page);
     write_u32(page + 12U, tree->row_count);
+    return BTREE_OK;
 }
 
 static uint32_t leaf_find_index(const unsigned char *page, int id)
@@ -623,7 +624,7 @@ BTree *btree_open(Pager *pager, BTreeResult *result)
         return NULL;
     }
 
-    if (pager->num_pages == 1U && read_u32(meta) == 0U) {
+    if (pager->file_length == 0U) {
         tree->root_page = 1;
         tree->row_count = 0;
 
@@ -634,7 +635,11 @@ BTree *btree_open(Pager *pager, BTreeResult *result)
         }
 
         initialize_leaf(root, 0);
-        write_metadata(tree);
+        if (write_metadata(tree) != BTREE_OK) {
+            free(tree);
+            *result = BTREE_IO_ERROR;
+            return NULL;
+        }
         return tree;
     }
 
@@ -669,7 +674,10 @@ BTreeResult btree_flush(BTree *tree)
         return BTREE_INVALID_ARGUMENT;
     }
 
-    write_metadata(tree);
+    BTreeResult metadata_result = write_metadata(tree);
+    if (metadata_result != BTREE_OK) {
+        return metadata_result;
+    }
 
     for (size_t page_number = 0; page_number < tree->pager->num_pages; ++page_number) {
         if (tree->pager->pages[page_number] != NULL &&
@@ -681,14 +689,15 @@ BTreeResult btree_flush(BTree *tree)
     return BTREE_OK;
 }
 
-void btree_close(BTree *tree)
+BTreeResult btree_close(BTree *tree)
 {
     if (tree == NULL) {
-        return;
+        return BTREE_INVALID_ARGUMENT;
     }
 
-    (void)btree_flush(tree);
+    BTreeResult result = btree_flush(tree);
     free(tree);
+    return result;
 }
 
 BTreeResult btree_insert(BTree *tree, const Row *row)
