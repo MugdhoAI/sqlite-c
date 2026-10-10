@@ -72,7 +72,7 @@ Table *table_open(const char *filename, SqliteResult *result)
         pager_close(pager);
         free(table->rows);
         free(table);
-        *result = SQLITE_IO_ERROR;
+        *result = tree_result == BTREE_CORRUPT ? SQLITE_CORRUPT : SQLITE_IO_ERROR;
         return NULL;
     }
 
@@ -165,8 +165,9 @@ SqliteResult table_insert(Table *table, const Row *row)
         case BTREE_TABLE_FULL:
             return SQLITE_TABLE_FULL;
         case BTREE_IO_ERROR:
-        case BTREE_CORRUPT:
             return SQLITE_IO_ERROR;
+        case BTREE_CORRUPT:
+            return SQLITE_CORRUPT;
         default:
             return SQLITE_INVALID_ID;
         }
@@ -237,6 +238,8 @@ const char *sqlite_result_string(SqliteResult result)
         return "row not found";
     case SQLITE_IO_ERROR:
         return "database I/O error";
+    case SQLITE_CORRUPT:
+        return "database file is corrupt";
     default:
         return "unknown error";
     }
