@@ -18,7 +18,8 @@ typedef enum {
     SQLITE_INVALID_EMAIL,
     SQLITE_DUPLICATE_ID,
     SQLITE_ROW_NOT_FOUND,
-    SQLITE_IO_ERROR
+    SQLITE_IO_ERROR,
+    SQLITE_CORRUPT
 } SqliteResult;
 
 typedef struct {
