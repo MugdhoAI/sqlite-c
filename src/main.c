@@ -75,9 +75,9 @@ int main(void)
                 Row row;
                 SqliteResult result = table_find(table, statement.where_id, &row);
                 if (result == SQLITE_OK) {
-                    printf("%d | %s | %s\\n", row.id, row.username, row.email);
+                    printf("%d | %s | %s\n", row.id, row.username, row.email);
                 } else {
-                    printf("error: %s\\n", sqlite_result_string(result));
+                    printf("error: %s\n", sqlite_result_string(result));
                 }
             } else {
                 print_rows(table);
