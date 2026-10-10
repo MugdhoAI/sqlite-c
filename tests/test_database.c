@@ -30,7 +30,7 @@ static void test_insert_and_read(void)
     assert(table_insert(table, &second) == SQLITE_OK);
     assert(table_size(table) == 2);
 
-    table_destroy(table);
+    assert(table_close(table) == SQLITE_OK);
 
     table = table_open(filename, &result);
     assert(table != NULL);
@@ -42,7 +42,7 @@ static void test_insert_and_read(void)
     assert(strcmp(row->username, "user2") == 0);
     assert(strcmp(row->email, "user2@example.com") == 0);
 
-    table_destroy(table);
+    assert(table_close(table) == SQLITE_OK);
     remove(filename);
 }
 
@@ -228,6 +228,24 @@ static void test_corrupt_node_count_is_rejected(void)
     remove(filename);
 }
 
+static void test_corrupt_metadata_page_is_rejected(void)
+{
+    const char *filename = "build/test_corrupt_metadata.db";
+    remove(filename);
+
+    FILE *file = fopen(filename, "wb");
+    assert(file != NULL);
+    unsigned char page[PAGE_SIZE] = {0};
+    assert(fwrite(page, sizeof(page), 1, file) == 1);
+    assert(fclose(file) == 0);
+
+    SqliteResult result;
+    Table *table = table_open(filename, &result);
+    assert(table == NULL);
+    assert(result != SQLITE_OK);
+    remove(filename);
+}
+
 static void test_corrupt_child_reference_is_rejected(void)
 {
     const char *filename = "build/test_corrupt_child.db";
@@ -252,6 +270,7 @@ int main(void)
     test_lookup();
     test_validation();
     test_corrupt_node_count_is_rejected();
+    test_corrupt_metadata_page_is_rejected();
     test_corrupt_child_reference_is_rejected();
     return 0;
 }
