@@ -29,7 +29,6 @@ typedef struct {
 
 typedef struct Table Table;
 
-Table *table_create(size_t capacity);
 Table *table_open(const char *filename, SqliteResult *result);
 void table_destroy(Table *table);
 SqliteResult table_flush(Table *table);
