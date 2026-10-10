@@ -106,22 +106,33 @@ void table_print_tree(const Table *table)
     }
 }
 
-void table_destroy(Table *table)
+SqliteResult table_close(Table *table)
 {
     if (table == NULL) {
-        return;
+        return SQLITE_IO_ERROR;
     }
 
-    if (table->tree != NULL) {
-        btree_close(table->tree);
+    SqliteResult result = SQLITE_OK;
+    if (table->tree != NULL && btree_close(table->tree) != BTREE_OK) {
+        result = SQLITE_IO_ERROR;
     }
+    table->tree = NULL;
 
-    if (table->pager != NULL) {
-        pager_close(table->pager);
+    if (table->pager != NULL && pager_close(table->pager) != PAGER_OK) {
+        result = SQLITE_IO_ERROR;
     }
+    table->pager = NULL;
 
     free(table->rows);
     free(table);
+    return result;
+}
+
+void table_destroy(Table *table)
+{
+    if (table != NULL) {
+        (void)table_close(table);
+    }
 }
 
 SqliteResult table_insert(Table *table, const Row *row)
