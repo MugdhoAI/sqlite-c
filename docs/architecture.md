@@ -83,7 +83,7 @@ When a leaf becomes full, sqlite-c:
 3. splits the rows into ordered left and right leaves
 4. links the new leaf into the leaf chain
 5. inserts the new sibling into the parent
-6. updates separators and flushes the affected pages
+6. updates parent separators; cached pages are written during an explicit flush, and close also attempts to flush them
 
 When the root leaf splits for the first time, the original root page is converted into an internal node and its previous contents are moved into a child page. This keeps the root page number stable.
 
