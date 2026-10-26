@@ -1,5 +1,9 @@
 # sqlite-c
 
+<p align="center">
+  <img src="docs/images/sqlite-c-hero.svg" alt="sqlite-c: a SQLite-inspired database engine in C11" width="100%">
+</p>
+
 A small SQLite inspired relational database engine built from scratch in C11.
 
 The project focuses on the storage mechanisms behind a database rather than reproducing SQLite's full feature set. It includes persistent storage built around fixed size pages, B tree table storage, a small SQL parser, an interactive shell, automated tests, a benchmark, and sanitizer coverage.
