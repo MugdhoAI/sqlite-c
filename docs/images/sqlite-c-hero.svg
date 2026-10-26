@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500" role="img" aria-labelledby="title desc">
+  <title id="title">sqlite-c: Small. Simple. Powerful.</title>
+  <desc id="desc">A dark blue technical banner featuring a database-engine mascot, B-tree structure, page storage, and example SQL commands.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#030914"/><stop offset=".55" stop-color="#061326"/><stop offset="1" stop-color="#02060d"/></linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#25baff"/><stop offset="1" stop-color="#2677ff"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0f3ff"/><stop offset=".28" stop-color="#547fa9"/><stop offset=".55" stop-color="#132b46"/><stop offset="1" stop-color="#07101d"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1500" height="500" rx="18" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1498" height="498" rx="17" fill="none" stroke="#24415e" stroke-width="2"/>
+  <g opacity=".18" stroke="#15518a" stroke-width="1">
+    <path d="M650 30V470M700 30V470M750 30V470M800 30V470M850 30V470M900 30V470M950 30V470M1000 30V470M1050 30V470M1100 30V470M1150 30V470M1200 30V470M1250 30V470M1300 30V470M1350 30V470"/>
+    <path d="M650 80H1460M650 130H1460M650 180H1460M650 230H1460M650 280H1460M650 330H1460M650 380H1460M650 430H1460"/>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#3daeff" opacity=".32" font-size="12">
+    <text x="710" y="90">PAGE 00 / ROOT NODE</text><text x="710" y="110">0x534C4954452D43</text><text x="710" y="390">PAGER_FLUSH()</text><text x="710" y="410">BTREE_INSERT(key, row)</text>
+  </g>
+  <g transform="translate(70 76)">
+    <text x="0" y="0" fill="#35baff" font-family="Arial,Helvetica,sans-serif" font-size="18" letter-spacing="5">A SQLITE INSPIRED DATABASE ENGINE</text>
+    <text x="-3" y="124" fill="#f4f8ff" font-family="Arial,Helvetica,sans-serif" font-size="112" font-weight="800" letter-spacing="-5">sqlite<tspan fill="url(#blue)">-c</tspan></text>
+    <text x="0" y="184" fill="#f2f6ff" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="700">Small. Simple. <tspan fill="#319aff">Powerful.</tspan></text>
+    <text x="0" y="232" fill="#c7d7ea" font-family="Arial,Helvetica,sans-serif" font-size="21">A compact relational database engine in C11.</text>
+    <text x="0" y="262" fill="#c7d7ea" font-family="Arial,Helvetica,sans-serif" font-size="21">Learn storage, indexing, SQL parsing and persistence.</text>
+    <text x="0" y="330" fill="#8ca9ca" font-family="ui-monospace,Consolas,monospace" font-size="14" letter-spacing="2">C  •  B-TREES  •  PAGER  •  SQL PARSER  •  TESTS</text>
+  </g>
+  <g transform="translate(930 255)">
+    <ellipse cx="0" cy="155" rx="145" ry="24" fill="#001329" opacity=".9"/>
+    <g filter="url(#glow)" opacity=".7"><ellipse cx="0" cy="-4" rx="112" ry="38" fill="none" stroke="#1d91ff" stroke-width="2"/><ellipse cx="0" cy="95" rx="112" ry="38" fill="none" stroke="#1d91ff" stroke-width="2"/></g>
+    <path d="M-112 -5V96C-112 117 -62 135 0 135S112 117 112 96V-5" fill="url(#metal)" stroke="#4bbaff" stroke-width="2"/>
+    <ellipse cx="0" cy="-5" rx="112" ry="39" fill="url(#metal)" stroke="#7dd4ff" stroke-width="3"/>
+    <ellipse cx="0" cy="-5" rx="88" ry="25" fill="#071a2e" stroke="#2469a4" stroke-width="2"/>
+    <path d="M-112 28C-112 49 -62 66 0 66S112 49 112 28M-112 61C-112 82 -62 99 0 99S112 82 112 61" fill="none" stroke="#4bbaff" stroke-width="2"/>
+    <path d="M-72 -1L-45 -12M45 -12L72 -1" stroke="#e8f8ff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-48 -4L-22 -11M22 -11L48 -4" stroke="#27baff" stroke-width="5" stroke-linecap="round" filter="url(#glow)"/>
+    <text x="0" y="122" text-anchor="middle" fill="#d8eaff" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700">sqlite-c</text>
+  </g>
+  <g transform="translate(1190 55)" stroke="#168fff" fill="none" stroke-width="2">
+    <rect x="0" y="0" width="250" height="100" rx="8" fill="#030d1a" stroke="#135ca0"/>
+    <g font-family="ui-monospace,Consolas,monospace" font-size="12" stroke="none" fill="#77c7ff">
+      <text x="15" y="24">sqlite-c&gt; INSERT INTO users</text><text x="15" y="45">sqlite-c&gt; SELECT * FROM users;</text><text x="15" y="66">sqlite-c&gt; WHERE id = 2;</text>
+    </g>
+    <rect x="68" y="130" width="110" height="36" rx="5"/><rect x="25" y="215" width="62" height="30" rx="4"/><rect x="94" y="215" width="62" height="30" rx="4"/><rect x="163" y="215" width="62" height="30" rx="4"/>
+    <path d="M123 166V187L56 215M123 187L125 215M123 187L194 215"/>
+    <g font-family="ui-monospace,Consolas,monospace" font-size="13" stroke="none" fill="#8bd4ff"><text x="91" y="153">B+ TREE</text><text x="35" y="234">LEAF</text><text x="103" y="234">LEAF</text><text x="171" y="234">LEAF</text></g>
+    <g transform="translate(15 300)" stroke="#1475c5"><rect width="220" height="76" rx="7" fill="#06172a"/><path d="M18 24H202M18 48H202"/></g>
+    <g font-family="ui-monospace,Consolas,monospace" font-size="13" stroke="none" fill="#6bbcff"><text x="31" y="315">PAGE 0 · METADATA</text><text x="31" y="339">PAGE 1 · ROOT</text><text x="31" y="363">PAGE N · LEAF</text></g>
+  </g>
+  <text x="1390" y="460" fill="#36aaff" font-family="cursive" font-size="23" font-style="italic" text-anchor="middle">Build · Understand · Improve</text>
+</svg>
