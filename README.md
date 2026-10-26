@@ -1,10 +1,29 @@
-# sqlite-c
+<p align="center">
+  <img src="docs/images/sqlite-c-hero.svg" alt="sqlite-c: Small. Simple. Powerful. A compact relational database engine in C11." width="100%">
+</p>
 
-A small SQLite inspired relational database engine built from scratch in C11.
+<h1 align="center">MugdhoAI / <a href="https://github.com/MugdhoAI/sqlite-c">sqlite-c</a></h1>
 
-The project focuses on the storage mechanisms behind a database rather than reproducing SQLite's full feature set. It includes persistent storage built around fixed size pages, B tree table storage, a small SQL parser, an interactive shell, automated tests, a benchmark, and sanitizer coverage.
+<p align="center">
+  <a href="https://github.com/MugdhoAI/sqlite-c/actions/workflows/ci.yml"><img src="https://github.com/MugdhoAI/sqlite-c/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://github.com/MugdhoAI/sqlite-c/releases/tag/v0.1.0"><img src="https://img.shields.io/badge/release-v0.1.0-blue" alt="Release v0.1.0"></a>
+  <a href="https://github.com/MugdhoAI/sqlite-c/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/language-C11-00599C" alt="C11">
+</p>
 
-The database file format is intentionally project specific and is not compatible with SQLite database files.
+**sqlite-c** is a learning project that implements a minimal relational database engine in C11. It follows SQLite's design ideas while keeping the storage engine small enough to study: fixed size pages, B-tree indexing, SQL parsing, and persistence.
+
+This project uses its own database file format. It is **not compatible with SQLite database files** and is not intended to replace SQLite.
+
+<table>
+  <tr>
+    <td align="center" width="20%"><strong>SQL Support</strong><br><sub>INSERT, SELECT, WHERE</sub></td>
+    <td align="center" width="20%"><strong>B-Trees</strong><br><sub>Ordered storage and lookup</sub></td>
+    <td align="center" width="20%"><strong>Page Storage</strong><br><sub>4096-byte pages and pager</sub></td>
+    <td align="center" width="20%"><strong>Built-in Tests</strong><br><sub>Parser, pager, persistence</sub></td>
+    <td align="center" width="20%"><strong>Simple API</strong><br><sub>Small C interface</sub></td>
+  </tr>
+</table>
 
 ## Why this project exists
 
