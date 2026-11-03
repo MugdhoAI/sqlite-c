@@ -1,5 +1,6 @@
 #include "pager.h"
 
+#include <errno.h>
 #include <stdlib.h>
 
 static size_t page_count_for_length(size_t file_length)
@@ -16,8 +17,11 @@ Pager *pager_open(const char *filename, PagerResult *result)
     *result = PAGER_OK;
 
     FILE *file = fopen(filename, "r+b");
-    if (file == NULL) {
-        file = fopen(filename, "w+b");
+    if (file == NULL && errno == ENOENT) {
+        file = fopen(filename, "w+bx");
+        if (file == NULL && errno == EEXIST) {
+            file = fopen(filename, "r+b");
+        }
     }
 
     if (file == NULL) {
