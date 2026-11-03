@@ -779,7 +779,7 @@ BTreeResult btree_find(const BTree *tree, int id, Row *row)
                 deserialize_row(row, const_leaf_cell(page, index));
                 return BTREE_OK;
             }
-            return BTREE_INVALID_ARGUMENT;
+            return BTREE_ROW_NOT_FOUND;
         }
 
         page_number = child_page_at(page, internal_child_index(page, id));
@@ -899,6 +899,8 @@ const char *btree_result_string(BTreeResult result)
         return "database capacity reached";
     case BTREE_CORRUPT:
         return "database file is corrupt";
+    case BTREE_ROW_NOT_FOUND:
+        return "row not found";
     default:
         return "unknown error";
     }
