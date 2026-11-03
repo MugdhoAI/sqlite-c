@@ -11,7 +11,8 @@ typedef enum {
     PAGER_OK = 0,
     PAGER_INVALID_ARGUMENT,
     PAGER_IO_ERROR,
-    PAGER_OUT_OF_PAGES
+    PAGER_OUT_OF_PAGES,
+    PAGER_CORRUPT
 } PagerResult;
 
 typedef struct {

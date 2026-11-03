@@ -228,6 +228,21 @@ static void test_corrupt_node_count_is_rejected(void)
     remove(filename);
 }
 
+static void test_partial_page_database_is_reported_as_corrupt(void)
+{
+    const char *filename = "build/test_partial_page.db";
+    FILE *file = fopen(filename, "wb");
+    assert(file != NULL);
+    assert(fputc(0, file) != EOF);
+    assert(fclose(file) == 0);
+
+    SqliteResult result = SQLITE_OK;
+    Table *table = table_open(filename, &result);
+    assert(table == NULL);
+    assert(result == SQLITE_CORRUPT);
+    remove(filename);
+}
+
 static void test_corrupt_metadata_page_is_rejected(void)
 {
     const char *filename = "build/test_corrupt_metadata.db";
@@ -271,6 +286,7 @@ int main(void)
     test_validation();
     test_corrupt_node_count_is_rejected();
     test_corrupt_metadata_page_is_rejected();
+    test_partial_page_database_is_reported_as_corrupt();
     test_corrupt_child_reference_is_rejected();
     return 0;
 }
