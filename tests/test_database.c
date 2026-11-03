@@ -143,7 +143,7 @@ static void test_lookup(void)
     assert(found.id == 23);
     assert(strcmp(found.username, "user23") == 0);
 
-    assert(table_find(table, 99, &found) != SQLITE_OK);
+    assert(table_find(table, 99, &found) == SQLITE_ROW_NOT_FOUND);
 
     table_destroy(table);
     remove(filename);
