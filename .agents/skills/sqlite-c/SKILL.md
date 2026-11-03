@@ -1,3 +1,8 @@
+---
+name: sqlite-c-project
+description: Project specific engineering guidance for auditing, understanding, modifying, testing, and reviewing the MugdhoAI/sqlite-c C11 database engine.
+---
+
 # sqlite-c Project Skill
 
 ## Purpose
