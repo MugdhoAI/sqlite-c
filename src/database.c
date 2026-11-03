@@ -93,7 +93,6 @@ Table *table_open(const char *filename, SqliteResult *result)
         btree_read_all(tree, table->rows, TABLE_ROW_CAPACITY, &table->size);
     if (read_result != BTREE_OK) {
         table_destroy(table);
-        table_destroy(table);
         switch (read_result) {
         case BTREE_CORRUPT:
             *result = SQLITE_CORRUPT;
