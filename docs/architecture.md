@@ -1,130 +1,86 @@
 # Architecture
 
-sqlite-c is organized as a small set of layers with explicit responsibilities. The design keeps SQL handling separate from storage so the database format can evolve independently from the command surface.
+## Scope
+
+sqlite-c is a small educational relational database engine written in C11. It uses a project specific file format and is not compatible with SQLite database files.
+
+The implementation separates command parsing, the table API, B tree storage, and page based file access.
 
 ## Data flow
 
 ```text
-interactive command
+interactive shell (src/main.c)
         |
         v
-      parser
+SQL subset parser (src/parser.c)
         |
         v
-    table API
+table API (src/database.c)
         |
         v
-      B-tree
-     /      \
-leaf pages  internal root
-     |
-     v
-    pager
-     |
-     v
+B tree (src/btree.c)
+        |
+        v
+pager (src/pager.c)
+        |
+        v
 database file
 ```
 
 ## Shell
 
-`src/main.c` owns the interactive loop. It reads one command, sends it to the parser, executes the resulting statement, and prints the result.
+`src/main.c` reads one command at a time into a 512 byte buffer, rejects commands that exceed the buffer, parses the command, and dispatches the resulting statement. The shell supports `.help`, `.btree`, and `.exit`.
 
-Supported SQL currently includes:
-
-```sql
-INSERT INTO users VALUES (id, 'username', 'email');
-SELECT * FROM users;
-SELECT * FROM users WHERE id = 1;
-```
-
-Meta commands include `.help`, `.btree`, and `.exit`.
+The SQL surface is limited to INSERT, SELECT all rows, and SELECT by ID. The parser also retains a legacy short INSERT form.
 
 ## Parser
 
-`src/parser.c` converts supported commands into typed statements.
+`src/parser.c` recognizes a small set of command patterns using `sscanf`, string comparisons, and numeric conversion with `strtol`. It checks that supported commands have no unexpected trailing input. It is not a general SQL grammar or tokenizer.
 
-The parser is deliberately small. It is responsible for recognizing the supported command forms; validation and storage errors are handled by the lower layers.
-
-Keeping parsing separate from storage means new SQL operations can be added without changing the page format.
+The parser returns a typed `Statement`. It does not access storage.
 
 ## Table API
 
-`src/database.c` provides the public table operations used by the shell and tests.
+`src/database.c` exposes the public `Table` interface declared in `include/sqlite.h`.
 
-Responsibilities include:
+Responsibilities include validating row fields, opening and closing the pager and B tree, translating storage errors, maintaining an ordered in memory row array, and exposing insert, lookup, iteration, flush, and close operations.
 
-- validating row fields
-- rejecting invalid and duplicate IDs
-- inserting rows into the B-tree
-- maintaining the ordered in-memory result view
-- exposing point lookup and row iteration
-- translating lower-level errors into public results
-- reporting flush failures through `table_close`
+The B tree is the persistent source of truth. The in memory row array is a second representation used by the table iteration API. It is allocated with a fixed capacity of `TABLE_MAX_PAGES * 13` rows and rebuilt from the B tree on open.
 
-The persistent source of truth is the B-tree. On open, the engine checks metadata and B-tree structure, including node types and capacities, page references, parent links, key ordering, separator values, leaf-chain links, and the metadata row count. These checks reject the malformed metadata and B-tree structures covered by the implementation; they do not guarantee detection of every possible corrupt row field or malformed database file.
+## B tree
 
-## B-tree
+`src/btree.c` stores rows in sorted leaf pages. Internal pages store child page numbers and separator keys. A separator is the maximum key in the child to its left.
 
-`src/btree.c` stores rows in ordered leaf pages.
+The current tree has at most two levels: one internal root and its leaf children. When the initial root leaf splits, the original root page is converted into an internal root and the old leaf contents are copied to a newly allocated child page. Later leaf splits add another child to that root.
 
-Leaf pages contain:
+Internal node splitting and deeper levels are not implemented. A full internal root causes insertion to return a capacity error.
 
-- a node type
-- a parent page number
-- a row count
-- a next-leaf pointer
-- fixed-size row cells
+Leaf pages are linked in key order. Full table reads start at the leftmost leaf and follow this linked list. Point lookup descends from the root using separator keys.
 
-The internal root contains child page numbers and separator keys.
-
-When a leaf becomes full, sqlite-c:
-
-1. allocates a sibling page
-2. combines the existing rows with the new row
-3. splits the rows into ordered left and right leaves
-4. links the new leaf into the leaf chain
-5. inserts the new sibling into the parent
-6. updates parent separators; cached pages are written during an explicit flush, and close also attempts to flush them
-
-When the root leaf splits for the first time, the original root page is converted into an internal node and its previous contents are moved into a child page. This keeps the root page number stable.
-
-The current implementation intentionally stops at a root internal node. Deeper internal-node splitting is deferred until the storage capacity model is expanded.
+On open, validation checks node types and counts, page references, parent pointers, key ordering, separator values, leaf chain order, reachability of allocated pages, and the metadata row count. This is meaningful structural validation, not a guarantee that every possible malformed byte sequence or corrupt row field will be detected.
 
 ## Pager
 
-`src/pager.c` manages the database file as fixed-size 4096-byte pages.
+`src/pager.c` owns the database `FILE *`, tracks file length and page count, and keeps loaded pages in a fixed array of 100 page pointers. Pages are allocated and loaded on demand. A flush writes an entire 4096 byte page and calls `fflush`.
 
-The pager:
+The pager does not implement a replacement policy, dirty page tracking, transactions, write ahead logging, or an operating system durability barrier such as `fsync`.
 
-- opens or creates the database file
-- loads pages on demand
-- keeps loaded pages in memory
-- flushes modified pages to disk
-- enforces the current 100-page limit
+## Page allocation and capacity
 
-Page zero stores database metadata. B-tree nodes occupy the remaining pages.
+Page zero is reserved for metadata. B tree pages are allocated by taking the current pager page count and appending a page. There is no free list or page reuse. The total database limit is 100 pages, including metadata.
 
-## File format
+## Persistence and error boundaries
 
-The database format is project-specific and is not intended to be compatible with SQLite.
+The B tree writes metadata and flushes loaded pages during explicit flush and close. The pager also attempts to flush loaded pages during close. A successful `fflush` is not a guarantee that data has reached stable storage after power loss or an operating system crash.
 
-The metadata page stores:
+The engine has no transaction boundary or rollback mechanism. A failed operation after mutating cached pages may leave the in memory state unsuitable for continued use. Failure atomicity must be designed and tested before stronger reliability claims are made.
 
-```text
-magic
-format version
-root page number
-row count
-```
+## Tests and build
 
-B-tree pages use a compact fixed layout. Rows are serialized directly into fixed-size cells using the project-defined `Row` structure.
+The Makefile builds the shell, database tests, pager tests, parser tests, and a benchmark. The database tests cover insertion, persistence, ordering, leaf splits, duplicate keys, lookup, row validation, and selected malformed database structures. Parser tests cover supported commands, trailing input, and numeric overflow. Pager tests cover a basic page write and read round trip. A shell integration test checks oversized command handling.
 
-## Testing
+GitHub Actions runs the test suite, a strict warning build, a benchmark smoke test, and a test build with AddressSanitizer and UndefinedBehaviorSanitizer.
 
-The storage tests exercise persistence, ordering, B-tree leaf splitting, duplicate detection, point lookup, row validation, and rejection of malformed metadata and B-tree structures covered by the tests. Parser tests cover numeric overflow, and a shell integration test verifies that oversized commands are rejected without partial execution.
+## Current boundaries
 
-The parser and pager have separate test binaries. CI additionally builds with strict warnings and runs the suite under AddressSanitizer and UndefinedBehaviorSanitizer.
-
-## Design boundary
-
-The project intentionally prioritizes understandable storage mechanics over SQL completeness. Features such as transactions, deeper B-tree levels, variable-length records, and a broader query planner are left for future iterations.
+The implementation does not provide multi level B tree growth, page reuse, variable length records, general SQL, UPDATE, DELETE, transactions, rollback, WAL, crash recovery, concurrent access, or SQLite file compatibility.
