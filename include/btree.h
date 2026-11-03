@@ -12,7 +12,8 @@ typedef enum {
     BTREE_IO_ERROR,
     BTREE_DUPLICATE_KEY,
     BTREE_TABLE_FULL,
-    BTREE_CORRUPT
+    BTREE_CORRUPT,
+    BTREE_ROW_NOT_FOUND
 } BTreeResult;
 
 typedef struct BTree BTree;

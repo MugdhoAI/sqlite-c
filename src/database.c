@@ -93,7 +93,17 @@ Table *table_open(const char *filename, SqliteResult *result)
         btree_read_all(tree, table->rows, TABLE_ROW_CAPACITY, &table->size);
     if (read_result != BTREE_OK) {
         table_destroy(table);
-        *result = SQLITE_IO_ERROR;
+        switch (read_result) {
+        case BTREE_CORRUPT:
+            *result = SQLITE_CORRUPT;
+            break;
+        case BTREE_TABLE_FULL:
+            *result = SQLITE_TABLE_FULL;
+            break;
+        default:
+            *result = SQLITE_IO_ERROR;
+            break;
+        }
         return NULL;
     }
 
@@ -222,11 +232,16 @@ SqliteResult table_find(const Table *table, int id, Row *row)
         return SQLITE_OK;
     }
 
-    if (result == BTREE_INVALID_ARGUMENT) {
+    switch (result) {
+    case BTREE_ROW_NOT_FOUND:
         return SQLITE_ROW_NOT_FOUND;
+    case BTREE_CORRUPT:
+        return SQLITE_CORRUPT;
+    case BTREE_TABLE_FULL:
+        return SQLITE_TABLE_FULL;
+    default:
+        return SQLITE_IO_ERROR;
     }
-
-    return SQLITE_IO_ERROR;
 }
 
 const char *sqlite_result_string(SqliteResult result)
