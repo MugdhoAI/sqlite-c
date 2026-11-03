@@ -55,7 +55,17 @@ Table *table_open(const char *filename, SqliteResult *result)
     PagerResult pager_result;
     Pager *pager = pager_open(filename, &pager_result);
     if (pager == NULL) {
-        *result = pager_result == PAGER_CORRUPT ? SQLITE_CORRUPT : SQLITE_IO_ERROR;
+        switch (pager_result) {
+        case PAGER_CORRUPT:
+            *result = SQLITE_CORRUPT;
+            break;
+        case PAGER_OUT_OF_PAGES:
+            *result = SQLITE_TABLE_FULL;
+            break;
+        default:
+            *result = SQLITE_IO_ERROR;
+            break;
+        }
         return NULL;
     }
 

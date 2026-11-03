@@ -228,6 +228,25 @@ static void test_corrupt_node_count_is_rejected(void)
     remove(filename);
 }
 
+static void test_database_exceeding_page_limit_reports_table_full(void)
+{
+    const char *filename = "build/test_too_many_pages.db";
+    FILE *file = fopen(filename, "wb");
+    assert(file != NULL);
+
+    unsigned char page[PAGE_SIZE] = {0};
+    for (size_t i = 0; i < TABLE_MAX_PAGES + 1U; ++i) {
+        assert(fwrite(page, sizeof(page), 1U, file) == 1U);
+    }
+    assert(fclose(file) == 0);
+
+    SqliteResult result = SQLITE_OK;
+    Table *table = table_open(filename, &result);
+    assert(table == NULL);
+    assert(result == SQLITE_TABLE_FULL);
+    remove(filename);
+}
+
 static void test_partial_page_database_is_reported_as_corrupt(void)
 {
     const char *filename = "build/test_partial_page.db";
@@ -287,6 +306,7 @@ int main(void)
     test_corrupt_node_count_is_rejected();
     test_corrupt_metadata_page_is_rejected();
     test_partial_page_database_is_reported_as_corrupt();
+    test_database_exceeding_page_limit_reports_table_full();
     test_corrupt_child_reference_is_rejected();
     return 0;
 }
