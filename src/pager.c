@@ -4,7 +4,7 @@
 
 static size_t page_count_for_length(size_t file_length)
 {
-    return (file_length + PAGE_SIZE - 1U) / PAGE_SIZE;
+    return file_length / PAGE_SIZE;
 }
 
 Pager *pager_open(const char *filename, PagerResult *result)
@@ -35,6 +35,12 @@ Pager *pager_open(const char *filename, PagerResult *result)
     if (length < 0) {
         fclose(file);
         *result = PAGER_IO_ERROR;
+        return NULL;
+    }
+
+    if ((size_t)length % PAGE_SIZE != 0U) {
+        fclose(file);
+        *result = PAGER_CORRUPT;
         return NULL;
     }
 
@@ -154,6 +160,8 @@ const char *pager_result_string(PagerResult result)
         return "I/O error";
     case PAGER_OUT_OF_PAGES:
         return "database exceeds maximum page count";
+    case PAGER_CORRUPT:
+        return "database file has a partial page";
     default:
         return "unknown error";
     }
