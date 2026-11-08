@@ -1,50 +1,206 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500" role="img" aria-labelledby="title desc">
-  <title id="title">sqlite-c: Small. Simple. Powerful.</title>
-  <desc id="desc">A dark blue technical banner featuring a database-engine mascot, B-tree structure, page storage, and example SQL commands.</desc>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#030914"/><stop offset=".55" stop-color="#061326"/><stop offset="1" stop-color="#02060d"/></linearGradient>
-    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#25baff"/><stop offset="1" stop-color="#2677ff"/></linearGradient>
-    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0f3ff"/><stop offset=".28" stop-color="#547fa9"/><stop offset=".55" stop-color="#132b46"/><stop offset="1" stop-color="#07101d"/></linearGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <rect width="1500" height="500" rx="18" fill="url(#bg)"/>
-  <rect x="1" y="1" width="1498" height="498" rx="17" fill="none" stroke="#24415e" stroke-width="2"/>
-  <g opacity=".18" stroke="#15518a" stroke-width="1">
-    <path d="M650 30V470M700 30V470M750 30V470M800 30V470M850 30V470M900 30V470M950 30V470M1000 30V470M1050 30V470M1100 30V470M1150 30V470M1200 30V470M1250 30V470M1300 30V470M1350 30V470"/>
-    <path d="M650 80H1460M650 130H1460M650 180H1460M650 230H1460M650 280H1460M650 330H1460M650 380H1460M650 430H1460"/>
+<title id="title">sqlite-c: Small. Simple. Powerful.</title>
+<desc id="desc">A blueprint style banner for sqlite-c, a compact relational database engine in C11, showing a B-tree lookup for id 5 across 4096 byte pages.</desc>
+<defs>
+  <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#170a1e"/><stop offset=".5" stop-color="#0e0514"/><stop offset="1" stop-color="#050208"/>
+  </linearGradient>
+  <radialGradient id="halo" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#2dd4bf" stop-opacity=".14"/><stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="titleBlue" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#f7e08b"/><stop offset=".42" stop-color="#d9ab3c"/><stop offset=".54" stop-color="#ffedb5"/><stop offset="1" stop-color="#c99635"/>
+  </linearGradient>
+  <linearGradient id="nodeGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#2e1a3d"/><stop offset=".45" stop-color="#20102e"/><stop offset="1" stop-color="#150a1f"/>
+  </linearGradient>
+  <linearGradient id="headGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#41255a"/><stop offset="1" stop-color="#2c1742"/>
+  </linearGradient>
+  <linearGradient id="amberGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#5eead4"/><stop offset="1" stop-color="#14b8a6"/>
+  </linearGradient>
+  <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#221331"/><stop offset="1" stop-color="#120a1b"/>
+  </linearGradient>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="glowAmber" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M50 0H0V50" fill="none" stroke="#2a5b8f" stroke-width="1"/>
+  </pattern>
+  <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#d4a437" stop-opacity="0"/><stop offset=".5" stop-color="#d4a437" stop-opacity=".8"/><stop offset="1" stop-color="#d4a437" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="sheenGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset=".55" stop-color="#ffffff" stop-opacity=".02"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+  </linearGradient>
+  <radialGradient id="vig" cx=".5" cy=".46" r=".78">
+    <stop offset=".58" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity=".42"/>
+  </radialGradient>
+  <radialGradient id="gemGlow" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#2dd4bf" stop-opacity=".34"/><stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="1500" height="500" rx="18" fill="url(#bgGrad)"/>
+<ellipse cx="1080" cy="255" rx="430" ry="215" fill="url(#halo)"/>
+<rect x="1" y="1" width="1498" height="498" rx="17" fill="none" stroke="#3d2a58" stroke-width="2"/>
+<rect x="46" y="3" width="1408" height="2" fill="url(#rimGrad)" opacity=".65"/>
+<rect x="11" y="11" width="1478" height="478" rx="12" fill="none" stroke="#d4a437" stroke-width="1" opacity=".32"/>
+<g transform="translate(76 0)">
+<text x="0" y="128" fill="#e9c46a" font-family="ui-monospace, Consolas, monospace" font-size="16" letter-spacing="4.5">A SQLITE INSPIRED DATABASE ENGINE</text>
+<text x="-4" y="238" fill="#fbf7ee" font-family="Arial, Helvetica, sans-serif" font-size="108" font-weight="800" letter-spacing="-4">sqlite<tspan fill="url(#titleBlue)">-c</tspan></text>
+<text x="0" y="298" fill="#f8f3e6" font-family="Arial, Helvetica, sans-serif" font-size="41" font-weight="700">Small. Simple. <tspan fill="#2dd4bf">Powerful.</tspan></text>
+<text x="0" y="344" fill="#ddd3e6" font-family="Arial, Helvetica, sans-serif" font-size="20.5">A compact relational database engine in C11.</text>
+<text x="0" y="374" fill="#ddd3e6" font-family="Arial, Helvetica, sans-serif" font-size="20.5">Pages, B-tree storage and a SQL parser, small</text>
+<text x="0" y="402" fill="#ddd3e6" font-family="Arial, Helvetica, sans-serif" font-size="20.5">enough to study end to end.</text>
+<g font-family="ui-monospace, Consolas, monospace" font-size="13.5" letter-spacing="2.2" fill="#9a8ab0">
+<text x="0" y="452">C11  ·  B-TREE  ·  PAGER  ·  SQL PARSER  ·  TESTS</text>
+</g></g>
+<g>
+<rect x="845" y="46" width="540" height="46" rx="9" fill="#150a20" stroke="#2dd4bf" stroke-width="1.3" opacity="0.98"/>
+<rect x="845" y="46" width="540" height="46" rx="9" fill="url(#sheenGrad)"/>
+<circle cx="872" cy="69" r="5" fill="#2dd4bf" filter="url(#glowAmber)"/>
+<text x="890" y="76" font-family="ui-monospace, Consolas, monospace" font-size="16.5" fill="#f6f1e7">SELECT * FROM users WHERE id = <tspan fill="#2dd4bf" font-weight="700">5</tspan>;</text>
+</g>
+<path d="M1115 92 V118" stroke="#2dd4bf" stroke-width="2.4" fill="none"/>
+<path d="M1115 118 l-6 -9 h12 Z" fill="#2dd4bf"/>
+<g>
+<rect x="717" y="123" width="176" height="102" rx="10" fill="#000" opacity="0.4" filter="url(#soft)"/>
+<rect x="712" y="118" width="176" height="102" rx="10" fill="url(#cardGrad)" stroke="#513a75" stroke-width="1.4"/>
+<text x="728" y="143" font-family="ui-monospace, Consolas, monospace" font-size="12.5" letter-spacing="1.5" fill="#f2d492">PAGE 0</text>
+<text x="728" y="166" font-family="ui-monospace, Consolas, monospace" font-size="12.5" fill="#c9b8a6">file header</text>
+<text x="728" y="186" font-family="ui-monospace, Consolas, monospace" font-size="12.5" fill="#c9b8a6">page size 4096</text>
+<text x="728" y="206" font-family="ui-monospace, Consolas, monospace" font-size="12.5" fill="#c9b8a6">root page 1</text>
+<path d="M888 168 H918" stroke="#5d4390" stroke-width="1.6" stroke-dasharray="4 4"/>
+</g>
+<rect x="927" y="125" width="330" height="104" rx="10" fill="#000000" opacity="0.58" filter="url(#soft)"/>
+<rect x="922" y="118" width="330" height="104" rx="10" fill="url(#nodeGrad)" stroke="#5d4390" stroke-width="1.6"/>
+<path d="M932 118 H1242 Q1252 118 1252 128 V148 H922 V128 Q922 118 932 118 Z" fill="url(#headGrad)"/>
+<text x="938" y="138" font-family="ui-monospace, Consolas, monospace" font-size="12.5" letter-spacing="1.5" fill="#f2d492">PAGE 1 · ROOT</text>
+<text x="1236" y="138" text-anchor="end" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#9785ba">INTERNAL</text>
+<rect x="938.0" y="164" width="144.0" height="38" rx="6" fill="#1d1029" stroke="#513a75" stroke-width="1"/>
+<text x="1010.0" y="189" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#f3ead8">2</text>
+<rect x="1092.0" y="164" width="144.0" height="38" rx="6" fill="url(#amberGrad)" stroke="#513a75" stroke-width="0"/>
+<polygon points="1095,167 1233,167 1164,184" fill="#ffffff" opacity=".20"/>
+<polygon points="1095,167 1164,184 1095,199" fill="#ffffff" opacity=".07"/>
+<polygon points="1233,167 1164,184 1233,199" fill="#04241f" opacity=".12"/>
+<text x="1164.0" y="189" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#04241f">5</text>
+<g stroke="#5d4390" stroke-width="1.8" fill="none">
+<path d="M985 222 C 940 262, 880 282, 824 318"/>
+<path d="M1075 222 C 1068 262, 1060 282, 1054 318"/>
+</g>
+<path d="M1185 222 C 1220 262, 1252 282, 1280 318" stroke="#2dd4bf" stroke-width="2.6" fill="none" filter="url(#glowAmber)"/>
+<ellipse cx="1282" cy="438" rx="185" ry="34" fill="url(#gemGlow)"/>
+<rect x="729" y="329" width="196" height="100" rx="10" fill="#000000" opacity="0.58" filter="url(#soft)"/>
+<rect x="724" y="322" width="196" height="100" rx="10" fill="url(#nodeGrad)" stroke="#5d4390" stroke-width="1.6"/>
+<path d="M734 322 H910 Q920 322 920 332 V352 H724 V332 Q724 322 734 322 Z" fill="url(#headGrad)"/>
+<text x="740" y="342" font-family="ui-monospace, Consolas, monospace" font-size="12.5" letter-spacing="1.5" fill="#f2d492">PAGE 2 · LEAF</text>
+<text x="904" y="342" text-anchor="end" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#9785ba"></text>
+<rect x="740.0" y="368" width="77.0" height="38" rx="6" fill="#1d1029" stroke="#513a75" stroke-width="1"/>
+<text x="778.5" y="393" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#f3ead8">1</text>
+<rect x="827.0" y="368" width="77.0" height="38" rx="6" fill="#1d1029" stroke="#513a75" stroke-width="1"/>
+<text x="865.5" y="393" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#f3ead8">2</text>
+<rect x="959" y="329" width="196" height="100" rx="10" fill="#000000" opacity="0.58" filter="url(#soft)"/>
+<rect x="954" y="322" width="196" height="100" rx="10" fill="url(#nodeGrad)" stroke="#5d4390" stroke-width="1.6"/>
+<path d="M964 322 H1140 Q1150 322 1150 332 V352 H954 V332 Q954 322 964 322 Z" fill="url(#headGrad)"/>
+<text x="970" y="342" font-family="ui-monospace, Consolas, monospace" font-size="12.5" letter-spacing="1.5" fill="#f2d492">PAGE 3 · LEAF</text>
+<text x="1134" y="342" text-anchor="end" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#9785ba"></text>
+<rect x="970.0" y="368" width="77.0" height="38" rx="6" fill="#1d1029" stroke="#513a75" stroke-width="1"/>
+<text x="1008.5" y="393" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#f3ead8">3</text>
+<rect x="1057.0" y="368" width="77.0" height="38" rx="6" fill="#1d1029" stroke="#513a75" stroke-width="1"/>
+<text x="1095.5" y="393" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#f3ead8">4</text>
+<rect x="1189" y="329" width="196" height="100" rx="10" fill="#000000" opacity="0.58" filter="url(#soft)"/>
+<rect x="1184" y="322" width="196" height="100" rx="10" fill="url(#nodeGrad)" stroke="#5d4390" stroke-width="1.6"/>
+<path d="M1194 322 H1370 Q1380 322 1380 332 V352 H1184 V332 Q1184 322 1194 322 Z" fill="url(#headGrad)"/>
+<text x="1200" y="342" font-family="ui-monospace, Consolas, monospace" font-size="12.5" letter-spacing="1.5" fill="#f2d492">PAGE 4 · LEAF</text>
+<text x="1364" y="342" text-anchor="end" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#9785ba"></text>
+<rect x="1200.0" y="368" width="48.0" height="38" rx="6" fill="url(#amberGrad)" stroke="#513a75" stroke-width="0"/>
+<polygon points="1203,371 1245,371 1224,385" fill="#ffffff" opacity=".20"/>
+<polygon points="1203,371 1224,385 1203,395" fill="#ffffff" opacity=".07"/>
+<polygon points="1245,371 1224,385 1245,395" fill="#04241f" opacity=".12"/>
+<text x="1224.0" y="393" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#04241f">5</text>
+<rect x="1258.0" y="368" width="48.0" height="38" rx="6" fill="#1d1029" stroke="#513a75" stroke-width="1"/>
+<text x="1282.0" y="393" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#f3ead8">6</text>
+<rect x="1316.0" y="368" width="48.0" height="38" rx="6" fill="#1d1029" stroke="#513a75" stroke-width="1"/>
+<text x="1340.0" y="393" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="17" font-weight="700" fill="#f3ead8">7</text>
+<g stroke="#5d4390" stroke-width="1.6">
+<path d="M920 372 H946"/><path d="M946 372 l-8 -4 v8 Z" fill="#5d4390"/>
+<path d="M1150 372 H1176"/><path d="M1176 372 l-8 -4 v8 Z" fill="#5d4390"/>
+</g>
+<text x="724" y="452" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="2" fill="#9785ba">4096-BYTE PAGES · KEYS STAY ORDERED · LEAF SPLITS ON INSERT</text>
+<text x="1424" y="86" text-anchor="end" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="2.5" fill="#5f87ad"></text>
+<g fill="#d4a437" opacity=".8">
+<circle cx="932" cy="128" r="2"/>
+<circle cx="1242" cy="128" r="2"/>
+<circle cx="932" cy="212" r="2"/>
+<circle cx="1242" cy="212" r="2"/>
+<circle cx="734" cy="332" r="2"/>
+<circle cx="910" cy="332" r="2"/>
+<circle cx="734" cy="412" r="2"/>
+<circle cx="910" cy="412" r="2"/>
+<circle cx="964" cy="332" r="2"/>
+<circle cx="1140" cy="332" r="2"/>
+<circle cx="964" cy="412" r="2"/>
+<circle cx="1140" cy="412" r="2"/>
+<circle cx="1194" cy="332" r="2"/>
+<circle cx="1370" cy="332" r="2"/>
+<circle cx="1194" cy="412" r="2"/>
+<circle cx="1370" cy="412" r="2"/>
+</g>
+
+<g id="lookup-anim">
+  <!-- chip ignite: border flare -->
+  <rect x="845" y="46" width="540" height="46" rx="9" fill="none" stroke="#5eead4" stroke-width="2" opacity="0">
+    <animate attributeName="opacity" values="0;0.85;0.85;0;0" keyTimes="0;0.03;0.16;0.22;1" dur="12s" repeatCount="indefinite"/>
+  </rect>
+  <!-- chip dot pulse ring -->
+  <g transform="translate(872 69)">
+    <circle r="9" fill="none" stroke="#5eead4" stroke-width="2" opacity="0">
+      <animateTransform attributeName="transform" type="scale" additive="sum" values="0.4;0.4;1.2;1.9;1.9" keyTimes="0;0.01;0.05;0.09;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.8;0.8;0;0" keyTimes="0;0.02;0.05;0.09;1" dur="12s" repeatCount="indefinite"/>
+    </circle>
   </g>
-  <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#3daeff" opacity=".32" font-size="12">
-    <text x="710" y="90">PAGE 00 / ROOT NODE</text><text x="710" y="110">0x534C4954452D43</text><text x="710" y="390">PAGER_FLUSH()</text><text x="710" y="410">BTREE_INSERT(key, row)</text>
+  <!-- light drop: chip to root -->
+  <g transform="translate(872 69)">
+    <circle r="4.5" fill="#5eead4" filter="url(#glowAmber)" opacity="0">
+      <animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;0 0;243 35;243 35" keyTimes="0;0.06;0.13;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.05;0.07;0.12;0.14;1" dur="12s" repeatCount="indefinite"/>
+    </circle>
   </g>
-  <g transform="translate(70 76)">
-    <text x="0" y="0" fill="#35baff" font-family="Arial,Helvetica,sans-serif" font-size="18" letter-spacing="5">A SQLITE INSPIRED DATABASE ENGINE</text>
-    <text x="-3" y="124" fill="#f4f8ff" font-family="Arial,Helvetica,sans-serif" font-size="112" font-weight="800" letter-spacing="-5">sqlite<tspan fill="url(#blue)">-c</tspan></text>
-    <text x="0" y="184" fill="#f2f6ff" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="700">Small. Simple. <tspan fill="#319aff">Powerful.</tspan></text>
-    <text x="0" y="232" fill="#c7d7ea" font-family="Arial,Helvetica,sans-serif" font-size="21">A compact relational database engine in C11.</text>
-    <text x="0" y="262" fill="#c7d7ea" font-family="Arial,Helvetica,sans-serif" font-size="21">Learn storage, indexing, SQL parsing and persistence.</text>
-    <text x="0" y="330" fill="#8ca9ca" font-family="ui-monospace,Consolas,monospace" font-size="14" letter-spacing="2">C  •  B-TREES  •  PAGER  •  SQL PARSER  •  TESTS</text>
+  <!-- root scan: key 2 checked and passed -->
+  <rect x="938" y="164" width="144" height="38" rx="6" fill="#2dd4bf" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.28;0;0" keyTimes="0;0.15;0.18;0.23;1" dur="12s" repeatCount="indefinite"/>
+  </rect>
+  <!-- root gem flare -->
+  <rect x="1092" y="164" width="144" height="38" rx="6" fill="#ffffff" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.5;0;0" keyTimes="0;0.21;0.24;0.30;1" dur="12s" repeatCount="indefinite"/>
+  </rect>
+  <g transform="translate(1164 183)">
+    <circle r="12" fill="none" stroke="#5eead4" stroke-width="2" opacity="0">
+      <animateTransform attributeName="transform" type="scale" additive="sum" values="0.5;0.5;1.1;1.7;1.7" keyTimes="0;0.21;0.26;0.33;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0.85;0;0" keyTimes="0;0.21;0.25;0.33;1" dur="12s" repeatCount="indefinite"/>
+    </circle>
   </g>
-  <g transform="translate(930 255)">
-    <ellipse cx="0" cy="155" rx="145" ry="24" fill="#001329" opacity=".9"/>
-    <g filter="url(#glow)" opacity=".7"><ellipse cx="0" cy="-4" rx="112" ry="38" fill="none" stroke="#1d91ff" stroke-width="2"/><ellipse cx="0" cy="95" rx="112" ry="38" fill="none" stroke="#1d91ff" stroke-width="2"/></g>
-    <path d="M-112 -5V96C-112 117 -62 135 0 135S112 117 112 96V-5" fill="url(#metal)" stroke="#4bbaff" stroke-width="2"/>
-    <ellipse cx="0" cy="-5" rx="112" ry="39" fill="url(#metal)" stroke="#7dd4ff" stroke-width="3"/>
-    <ellipse cx="0" cy="-5" rx="88" ry="25" fill="#071a2e" stroke="#2469a4" stroke-width="2"/>
-    <path d="M-112 28C-112 49 -62 66 0 66S112 49 112 28M-112 61C-112 82 -62 99 0 99S112 82 112 61" fill="none" stroke="#4bbaff" stroke-width="2"/>
-    <path d="M-72 -1L-45 -12M45 -12L72 -1" stroke="#e8f8ff" stroke-width="3" stroke-linecap="round"/>
-    <path d="M-48 -4L-22 -11M22 -11L48 -4" stroke="#27baff" stroke-width="5" stroke-linecap="round" filter="url(#glow)"/>
-    <text x="0" y="122" text-anchor="middle" fill="#d8eaff" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700">sqlite-c</text>
+  <!-- descent: root gem to leaf gem along the teal connector -->
+  <g transform="translate(1164 183)">
+    <circle r="4.5" fill="#5eead4" filter="url(#glowAmber)" opacity="0">
+      <animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;0 0;21 47;80 95;116 132;60 204;60 204" keyTimes="0;0.27;0.295;0.315;0.33;0.355;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.265;0.28;0.345;0.36;1" dur="12s" repeatCount="indefinite"/>
+    </circle>
   </g>
-  <g transform="translate(1190 55)" stroke="#168fff" fill="none" stroke-width="2">
-    <rect x="0" y="0" width="250" height="100" rx="8" fill="#030d1a" stroke="#135ca0"/>
-    <g font-family="ui-monospace,Consolas,monospace" font-size="12" stroke="none" fill="#77c7ff">
-      <text x="15" y="24">sqlite-c&gt; INSERT INTO users</text><text x="15" y="45">sqlite-c&gt; SELECT * FROM users;</text><text x="15" y="66">sqlite-c&gt; WHERE id = 2;</text>
-    </g>
-    <rect x="68" y="130" width="110" height="36" rx="5"/><rect x="25" y="215" width="62" height="30" rx="4"/><rect x="94" y="215" width="62" height="30" rx="4"/><rect x="163" y="215" width="62" height="30" rx="4"/>
-    <path d="M123 166V187L56 215M123 187L125 215M123 187L194 215"/>
-    <g font-family="ui-monospace,Consolas,monospace" font-size="13" stroke="none" fill="#8bd4ff"><text x="91" y="153">B+ TREE</text><text x="35" y="234">LEAF</text><text x="103" y="234">LEAF</text><text x="171" y="234">LEAF</text></g>
-    <g transform="translate(15 300)" stroke="#1475c5"><rect width="220" height="76" rx="7" fill="#06172a"/><path d="M18 24H202M18 48H202"/></g>
-    <g font-family="ui-monospace,Consolas,monospace" font-size="13" stroke="none" fill="#6bbcff"><text x="31" y="315">PAGE 0 · METADATA</text><text x="31" y="339">PAGE 1 · ROOT</text><text x="31" y="363">PAGE N · LEAF</text></g>
+  <!-- leaf gem flare + ring + glow swell -->
+  <ellipse cx="1282" cy="438" rx="215" ry="46" fill="url(#gemGlow)" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.95;0.95;0;0" keyTimes="0;0.36;0.46;0.78;0.92;1" dur="12s" repeatCount="indefinite"/>
+  </ellipse>
+  <rect x="1200" y="368" width="48" height="38" rx="6" fill="#ffffff" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.55;0;0" keyTimes="0;0.36;0.39;0.47;1" dur="12s" repeatCount="indefinite"/>
+  </rect>
+  <g transform="translate(1224 387)">
+    <circle r="10" fill="none" stroke="#5eead4" stroke-width="2" opacity="0">
+      <animateTransform attributeName="transform" type="scale" additive="sum" values="0.5;0.5;1.2;2.1;2.1" keyTimes="0;0.36;0.42;0.50;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0.9;0;0" keyTimes="0;0.36;0.40;0.50;1" dur="12s" repeatCount="indefinite"/>
+    </circle>
   </g>
-  <text x="1390" y="460" fill="#36aaff" font-family="cursive" font-size="23" font-style="italic" text-anchor="middle">Build · Understand · Improve</text>
+</g>
+<rect width="1500" height="500" rx="18" fill="url(#vig)"/>
 </svg>

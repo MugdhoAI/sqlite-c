@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/sqlite-c-hero.svg" alt="sqlite-c: Small. Simple. Powerful. A compact relational database engine in C11." width="100%">
+  <img src="docs/images/sqlite-c-hero.svg?v=2" alt="sqlite-c: Small. Simple. Powerful. A compact relational database engine in C11." width="100%">
 </p>
 
 <h1 align="center">MugdhoAI / <a href="https://github.com/MugdhoAI/sqlite-c">sqlite-c</a></h1>
