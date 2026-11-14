@@ -78,7 +78,7 @@ static int parse_legacy_insert(const char *input, Statement *statement)
     char id_text[11] = {0};
     int matched = sscanf(
         input,
-        "insert %10[0-9] %32s %255s%n",
+        "insert %10[0-9] %32[^ \t;] %255[^ \t;]%n",
         id_text,
         statement->row.username,
         statement->row.email,
